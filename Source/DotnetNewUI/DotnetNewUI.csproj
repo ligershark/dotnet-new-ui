@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Build">
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Package">
+    <Product>dotnet new ui</Product>
+    <Description>Helps you install and manage project templates while also helping to create projects from templates.</Description>
+    <PackageTags>dotnet new;Templates;Project Templates</PackageTags>
+  </PropertyGroup>
+
+</Project>
