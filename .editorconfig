@@ -417,6 +417,16 @@ dotnet_naming_rule.parameters_rule.severity             = warning
 ##########################################
 
 [*.cs]
+# SA0001: 
+# Justification: Comments turned off
+# https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1633.md
+dotnet_diagnostic.SA0001.severity = none
+
+# SA1600: 
+# Justification: Comments turned off
+# https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1600.md
+dotnet_diagnostic.SA1600.severity = none
+
 # SA1633: A C# code file is missing a standard file header.
 # Justification: Comments turned off
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1633.md

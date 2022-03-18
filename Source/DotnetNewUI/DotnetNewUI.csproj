@@ -1,7 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup Label="Build">
+    <OutputType>Exe</OutputType>
+    <PackageId>new-ui</PackageId>
     <TargetFramework>net6.0</TargetFramework>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>new-ui</ToolCommandName>
   </PropertyGroup>
 
   <PropertyGroup Label="Package">
