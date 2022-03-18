@@ -417,12 +417,12 @@ dotnet_naming_rule.parameters_rule.severity             = warning
 ##########################################
 
 [*.cs]
-# SA0001: 
+# SA0001:
 # Justification: Comments turned off
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1633.md
 dotnet_diagnostic.SA0001.severity = none
 
-# SA1600: 
+# SA1600: Elements should be documented.
 # Justification: Comments turned off
 # https://github.com/DotNetAnalyzers/StyleCopAnalyzers/blob/master/documentation/SA1600.md
 dotnet_diagnostic.SA1600.severity = none
