@@ -4,7 +4,9 @@ using System.Text.Json.Serialization;
 
 internal record class NuGetFeed(NuGetFeedResource[] Resources)
 {
-    public NuGetFeedResource GetResource(string type) => this.Resources.First(x => x.Type == type);
+    public string QueryUrl => this.Resources.First(r => r.Type == "SearchQueryService").Id;
+
+    public string PackageIconUrl => this.Resources.First(r => r.Type == "PackageBaseAddress/3.0.0").Id;
 }
 
 internal record class NuGetFeedResource(string Id, string Type)
