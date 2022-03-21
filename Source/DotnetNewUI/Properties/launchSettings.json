@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DotnetNewUI": {
+      "commandName": "Project",
+      "commandLineArgs": ""
+    }
+  }
+}

@@ -1,70 +1,54 @@
 namespace DotnetNewUI;
 
-using System.Reflection;
+using System;
+using System.CommandLine;
+using System.CommandLine.Builder;
+using System.CommandLine.Hosting;
+using System.CommandLine.Parsing;
+using Microsoft.Extensions.Hosting;
 
 public class Program
 {
-    public static void Main(string[] args)
+    private const int DefaultPort = 6000;
+
+    // new-ui --port 6000
+    public static async Task<int> Main(string[] arguments)
     {
-        if (args.Length == 0)
+        var portOption = new Option<int>(
+            new string[] { "-p", "--port" },
+            () => DefaultPort,
+            "The port to run the application on.");
+
+        var rootCommand = new RootCommand("desc...")
         {
-            var versionString = Assembly.GetEntryAssembly()?
-                                    .GetCustomAttribute<AssemblyInformationalVersionAttribute>()?
-                                    .InformationalVersion
-                                    .ToString();
+            portOption,
+        };
+        rootCommand.SetHandler(
+            (Func<IHost, int, CancellationToken, Task>)OnHandleAsync,
+            portOption);
 
-            Console.WriteLine($"botsay v{versionString}");
-            Console.WriteLine("-------------");
-            Console.WriteLine("\nUsage:");
-            Console.WriteLine("  botsay <message>");
-            return;
-        }
-
-        ShowBot(string.Join(' ', args));
+        var commandLineBuilder = new CommandLineBuilder(rootCommand)
+            .UseHost(hostBuilder => hostBuilder.ConfigureHost())
+            .UseDefaults();
+        var parser = commandLineBuilder.Build();
+        return await parser.InvokeAsync(arguments).ConfigureAwait(false);
     }
 
-    private static void ShowBot(string message)
+    private static async Task OnHandleAsync(IHost host, int port, CancellationToken cancellationToken)
     {
-        var bot = $"\n        {message}";
-        bot += @"
-    __________________
-                      \
-                       \
-                          ....
-                          ....'
-                           ....
-                        ..........
-                    .............'..'..
-                 ................'..'.....
-               .......'..........'..'..'....
-              ........'..........'..'..'.....
-             .'....'..'..........'..'.......'.
-             .'..................'...   ......
-             .  ......'.........         .....
-             .    _            __        ......
-            ..    #            ##        ......
-           ....       .                 .......
-           ......  .......          ............
-            ................  ......................
-            ........................'................
-           ......................'..'......    .......
-        .........................'..'.....       .......
-     ........    ..'.............'..'....      ..........
-   ..'..'...      ...............'.......      ..........
-  ...'......     ...... ..........  ......         .......
- ...........   .......              ........        ......
-.......        '...'.'.              '.'.'.'         ....
-.......       .....'..               ..'.....
-   ..       ..........               ..'........
-          ............               ..............
-         .............               '..............
-        ...........'..              .'.'............
-       ...............              .'.'.............
-      .............'..               ..'..'...........
-      ...............                 .'..............
-       .........                        ..............
-        .....
-";
-        Console.WriteLine(bot);
+        Console.WriteLine("Site running at:");
+        Console.WriteLine($"    -UI:      http://localhost:{port}");
+        Console.WriteLine($"    -Swagger: http://localhost:{port}/swagger");
+        Console.WriteLine("Enter CTRL+C to exit.");
+
+        while (true)
+        {
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                await Task
+                    .Delay(100, cancellationToken)
+                    .ConfigureAwait(false);
+            }
+        }
     }
 }
