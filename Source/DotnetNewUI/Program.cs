@@ -87,6 +87,9 @@ public class Program
         }
         catch (Exception exception)
         {
+            console.WriteLine("Oops, something went wrong, we'd appreciate a bug report.");
+            console.MarkupLine("  - [bold green]https://github.com/ligershark/dotnet-new-ui/issues[/]");
+            console.WriteLine();
             console.WriteException(exception);
         }
     }
