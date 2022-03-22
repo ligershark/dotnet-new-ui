@@ -2,6 +2,7 @@ namespace DotnetNewUI;
 
 using System.Diagnostics;
 using System.Reflection;
+using DotnetNewUI.Constants;
 using DotnetNewUI.NuGet;
 using DotnetNewUI.Services;
 using Microsoft.AspNetCore.Builder;
@@ -39,6 +40,13 @@ public static class HostBuilderExtensions
             .AddControllers()
             .AddApplicationPart(Assembly.GetExecutingAssembly()) // Needed for some reason to actually discover the API Controller
             .Services
+            .AddCors(
+                options => options.AddPolicy(
+                    CorsPolicyName.AllowAny,
+                    x => x
+                        .AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()))
             .AddEndpointsApiExplorer()
             .AddSwaggerGen()
             .AddSingleton(AnsiConsole.Console)
@@ -63,12 +71,13 @@ public static class HostBuilderExtensions
             .Configure(
                 app => app
                     .UseRouting()
+                    .UseCors()
                     .UseDefaultFiles()
                     .UseStaticFiles()
                     .UseEndpoints(
                         builder =>
                         {
-                            builder.MapControllers();
+                            builder.MapControllers().RequireCors(CorsPolicyName.AllowAny);
                             builder.MapSwagger();
                         })
                     .UseSwaggerUI());
