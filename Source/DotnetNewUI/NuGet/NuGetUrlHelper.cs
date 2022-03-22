@@ -30,12 +30,3 @@ internal static class NuGetUrlHelper
     public static string GetAvatarIconUrl(string profile)
         => $"https://www.nuget.org/profiles/{profile}/avatar?imageSize=64";
 }
-
-internal static class NuGetPagingHelper
-{
-    public static int GetNumberOfPages(int numberOfItems, int pageSize)
-        => (numberOfItems / pageSize) + 1;
-
-    public static (int Skip, int Take) GetRangeOfPage(int pageNumber, int pageSize)
-        => (pageNumber * pageSize, pageSize);
-}

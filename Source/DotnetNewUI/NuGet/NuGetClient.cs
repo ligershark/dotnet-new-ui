@@ -5,11 +5,6 @@ using System.Linq;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
-public interface INuGetClient
-{
-    Task<IReadOnlyList<NuGetPackageInfo>> GetNuGetTemplates();
-}
-
 public class NuGetClient : INuGetClient
 {
     private const int PageSize = 100;
@@ -18,17 +13,19 @@ public class NuGetClient : INuGetClient
     public NuGetClient(HttpClient httpClient)
         => this.httpClient = httpClient;
 
-    public async Task<IReadOnlyList<NuGetPackageInfo>> GetNuGetTemplates()
+    public async Task<IReadOnlyList<NuGetPackageInfo>> GetNuGetTemplatesAsync()
     {
-        var nuGetFeed = await GetNuGetFeed(NuGetUrlHelper.NuGetV3FeedUrl);
+        var nuGetFeed = await this.GetNuGetFeedAsync(NuGetUrlHelper.NuGetV3FeedUrl)
+            .ConfigureAwait(false);
         var queryEndpoint = nuGetFeed.QueryUrl;
         var iconEndpoint = nuGetFeed.PackageIconUrl;
 
         var firstPageUrl = NuGetUrlHelper.GetTemplatePackageQueryFirstPageUrl(queryEndpoint, PageSize);
-        var firstPage = await GetTemplatePackages(firstPageUrl);
+        var firstPage = await this.GetTemplatePackagesAsync(firstPageUrl).ConfigureAwait(false);
 
         var remainingPagesUrls = NuGetUrlHelper.GetTemplatePackageQueryRemainingPagesUrls(queryEndpoint, firstPage.TotalHits, PageSize);
-        var remainingPages = await Task.WhenAll(remainingPagesUrls.Select(url => GetTemplatePackages(url)));
+        var remainingPages = await Task.WhenAll(remainingPagesUrls.Select(url => this.GetTemplatePackagesAsync(url)))
+            .ConfigureAwait(false);
 
         var allTemplates = Enumerable
             .Concat(firstPage.Data, remainingPages.SelectMany(p => p.Data))
@@ -37,15 +34,15 @@ public class NuGetClient : INuGetClient
         return allTemplates;
     }
 
-    private async Task<NuGetFeed> GetNuGetFeed(string feedEndpoint)
+    private async Task<NuGetFeed> GetNuGetFeedAsync(string feedEndpoint)
     {
-        var nuGetFeed = await this.httpClient.GetFromJsonAsync<NuGetFeed>(feedEndpoint);
-        return nuGetFeed ?? throw new NullReferenceException("No response");
+        var nuGetFeed = await this.httpClient.GetFromJsonAsync<NuGetFeed>(feedEndpoint).ConfigureAwait(false);
+        return nuGetFeed ?? throw new InvalidOperationException("No response");
     }
 
-    private async Task<NuGetQueryResponse> GetTemplatePackages(string url)
+    private async Task<NuGetQueryResponse> GetTemplatePackagesAsync(string url)
     {
-        var queryResponse = await this.httpClient.GetFromJsonAsync<NuGetQueryResponse>(url);
-        return queryResponse ?? throw new NullReferenceException("No response");
+        var queryResponse = await this.httpClient.GetFromJsonAsync<NuGetQueryResponse>(url).ConfigureAwait(false);
+        return queryResponse ?? throw new InvalidOperationException("No response");
     }
 }

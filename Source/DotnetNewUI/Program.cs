@@ -72,7 +72,7 @@ public class Program
                 urlOpenerService.Open(url);
             }
 
-            await WaitForCancellation(cancellationToken).ConfigureAwait(false);
+            await WaitForCancellationAsync(cancellationToken).ConfigureAwait(false);
         }
         catch (TaskCanceledException)
         {
@@ -87,7 +87,7 @@ public class Program
         }
     }
 
-    private static Task WaitForCancellation(CancellationToken cancellationToken)
+    private static Task WaitForCancellationAsync(CancellationToken cancellationToken)
     {
         var tcs = new TaskCompletionSource();
         if (cancellationToken.IsCancellationRequested)

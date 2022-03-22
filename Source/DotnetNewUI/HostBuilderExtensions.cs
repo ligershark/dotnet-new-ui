@@ -1,4 +1,6 @@
 namespace DotnetNewUI;
+
+using System.Diagnostics;
 using System.Reflection;
 using DotnetNewUI.Constants;
 using DotnetNewUI.NuGet;

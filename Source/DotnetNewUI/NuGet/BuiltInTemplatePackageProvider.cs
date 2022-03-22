@@ -14,7 +14,7 @@ internal static class BuiltInTemplatePackageProvider
     public static async Task<IReadOnlyList<string>> GetAllTemplatePackagesAsync()
     {
         var packages = new List<string>();
-        foreach (var templateFolder in await GetTemplateFolders())
+        foreach (var templateFolder in await GetTemplateFoldersAsync().ConfigureAwait(false))
         {
             foreach (var nupkgPath in Directory.EnumerateFiles(templateFolder, "*.nupkg", SearchOption.TopDirectoryOnly))
             {
@@ -34,7 +34,7 @@ internal static class BuiltInTemplatePackageProvider
         // 2.2.207 [C:\Program Files\dotnet\sdk]
         // 5.0.406 [C:\Program Files\dotnet\sdk]
         // 6.0.201 [C:\Program Files\dotnet\sdk]
-        var (stdOut, stdErr) = await SimpleExec.Command.ReadAsync("dotnet", "--list-sdks");
+        var (stdOut, stdErr) = await SimpleExec.Command.ReadAsync("dotnet", "--list-sdks").ConfigureAwait(false);
 
         var sdk = stdOut.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).Last(); // Take latest SDK
         var regexMatch = Regex.Match(sdk, "^(?<version>.*) \\[(?<path>.*)\\]$");
@@ -47,11 +47,11 @@ internal static class BuiltInTemplatePackageProvider
         return (dotnetRootPath!, sdkVersion!);
     }
 
-    private static async Task<IEnumerable<string>> GetTemplateFolders()
+    private static async Task<IEnumerable<string>> GetTemplateFoldersAsync()
     {
         var templateFoldersToInstall = new List<string>();
 
-        var (dotnetRootPath, sdkVersion) = await GetSdkDirectoryPathAsync();
+        var (dotnetRootPath, sdkVersion) = await GetSdkDirectoryPathAsync().ConfigureAwait(false);
         var sdkPath = Path.Combine(dotnetRootPath, "sdk", sdkVersion.ToNormalizedString());
 
         // First grab templates from dotnet\templates\M.m folders, in ascending order, up to our version
