@@ -66,7 +66,7 @@ public class Program
             if (!noBrowser)
             {
                 var urlOpenerService = host.Services.GetRequiredService<IUrlOpenerService>();
-                urlOpenerService.Open(swaggerUrl);
+                urlOpenerService.Open(url);
             }
 
             while (true)
