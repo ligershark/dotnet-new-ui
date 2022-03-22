@@ -11,13 +11,11 @@ using Spectre.Console;
 
 public class Program
 {
-    private const int DefaultPort = 5432;
-
     public static async Task<int> Main(string[] arguments)
     {
         var portOption = new Option<int>(
             new string[] { "-p", "--port" },
-            () => DefaultPort,
+            () => PortService.DefaultPort,
             "The port to run the application on.");
         var noBrowserOption = new Option<bool>(
             new string[] { "-n", "--no-browser" },

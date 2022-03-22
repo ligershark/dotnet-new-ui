@@ -47,12 +47,11 @@ public static class HostBuilderExtensions
             .UseKestrel(
                 options =>
                 {
-                    // We need at least one binding to actually start the server.
-                    options.ListenAnyIP(
-                        4999,
-                        listenOptions => listenOptions.UseHttps());
-
                     var portService = options.ApplicationServices.GetRequiredService<IPortService>();
+
+                    // We need at least one binding to actually start the server.
+                    options.ListenAnyIP(PortService.DefaultPort);
+
                     options.Configure(portService.Configuration, reloadOnChange: true);
                 })
             .Configure(

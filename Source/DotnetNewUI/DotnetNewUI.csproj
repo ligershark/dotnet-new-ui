@@ -15,6 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup Label="Package References">
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
     <PackageReference Include="Spectre.Console" Version="0.43.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.3.0" />

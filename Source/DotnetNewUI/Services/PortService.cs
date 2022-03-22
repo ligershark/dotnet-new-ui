@@ -9,6 +9,8 @@ using Microsoft.Extensions.Configuration;
 /// </summary>
 public class PortService : IPortService
 {
+    public const int DefaultPort = 4999;
+
     private readonly ILogger<PortService> logger;
 
     public PortService(ILogger<PortService> logger)
@@ -27,21 +29,28 @@ public class PortService : IPortService
     {
         set
         {
-            var key = $"Endpoints:{value}:Url";
-            var url = this.Configuration[key];
-            if (string.IsNullOrEmpty(url))
+            if (value == DefaultPort)
             {
-                url = $"http://*:" + value;
-                this.Configuration[key] = url;
-                this.logger.AddedEndpoint(url, this.Configuration.GetDebugView());
+                this.logger.AlreadyOnDefaultPort(value);
             }
             else
             {
-                this.Configuration[key] = null;
-                this.logger.RemovedEndpoint(url, this.Configuration.GetDebugView());
-            }
+                var key = $"Endpoints:{value}:Url";
+                var url = this.Configuration[key];
+                if (string.IsNullOrEmpty(url))
+                {
+                    url = $"http://*:" + value;
+                    this.Configuration[key] = url;
+                    this.logger.AddedEndpoint(url, this.Configuration.GetDebugView());
+                }
+                else
+                {
+                    this.Configuration[key] = null;
+                    this.logger.RemovedEndpoint(url, this.Configuration.GetDebugView());
+                }
 
-            this.Configuration.Reload();
+                this.Configuration.Reload();
+            }
         }
     }
 }
