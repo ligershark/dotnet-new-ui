@@ -18,8 +18,16 @@ public class TemplatesController
 
     // Returns templates (multiple templates might belong to the same package)
     [HttpGet("installed")]
-    public async Task<IReadOnlyList<string>> GetInstalledTemplatesAsync() =>
-        await BuiltInTemplatePackageProvider.GetAllTemplatePackagesAsync().ConfigureAwait(false);
+    public async Task<IReadOnlyList<TemplateManifest>> GetInstalledTemplatesAsync()
+    {
+        var templatePackages = await BuiltInTemplatePackageProvider.GetAllTemplatePackagesAsync().ConfigureAwait(false);
+
+        var manifests = templatePackages
+            .SelectMany(path => PackageInspector.GetTemplateManifestsFromPackage(path))
+            .ToList();
+
+        return manifests;
+    }
 
     [HttpPost("installed/{packageId}")]
     public Task InstallTemplatePackageAsync(string packageId) => throw new NotImplementedException();
