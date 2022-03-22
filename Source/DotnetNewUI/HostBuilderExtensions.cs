@@ -65,9 +65,6 @@ public static class HostBuilderExtensions
                     .UseRouting()
                     .UseDefaultFiles()
                     .UseStaticFiles()
-                        new StaticFileOptions()
-                        {
-                        })
                     .UseEndpoints(
                         builder =>
                         {
