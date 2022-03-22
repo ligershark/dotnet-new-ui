@@ -2,9 +2,10 @@
   <article class="template">
     <img
       class="template__icon"
+      loading="lazy"
+      :src="iconWithFallbackUrl"
       width="256"
       height="256"
-      :src="iconWithFallbackUrl"
     />
     <div class="template__title">
       <h2 class="template__title-heading">
