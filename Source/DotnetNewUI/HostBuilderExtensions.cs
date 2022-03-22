@@ -1,6 +1,7 @@
 namespace DotnetNewUI;
 
 using System.Diagnostics;
+using DotnetNewUI.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,16 +36,29 @@ public static class HostBuilderExtensions
             .AddControllers()
             .Services
             .AddEndpointsApiExplorer()
-            .AddSwaggerGen();
+            .AddSwaggerGen()
+            .AddSingleton<IPortService, PortService>()
+            .AddSingleton<IUrlOpenerService, UrlOpenerService>();
 
     private static void ConfigureWebHostBuilder(IWebHostBuilder webHostBuilder) =>
         webHostBuilder
-            .UseKestrel()
-            .Configure(app =>
-            {
-                app.UseRouting();
-                app.UseEndpoints(endpointBuilder => endpointBuilder.MapControllers());
-                app.UseSwagger();
-                app.UseSwaggerUI();
-            });
+            .UseKestrel(
+                options =>
+                {
+                    // We need at least one binding to actually start the server.
+                    options.ListenAnyIP(
+                        4999,
+                        listenOptions => listenOptions.UseHttps());
+
+                    var portService = options.ApplicationServices.GetRequiredService<IPortService>();
+                    options.Configure(portService.Configuration, reloadOnChange: true);
+                })
+            .Configure(
+                app =>
+                {
+                    app.UseRouting();
+                    app.UseEndpoints(endpointBuilder => endpointBuilder.MapControllers());
+                    app.UseSwagger();
+                    app.UseSwaggerUI();
+                });
 }
