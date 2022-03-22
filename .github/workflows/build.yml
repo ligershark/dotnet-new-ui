@@ -39,7 +39,10 @@ jobs:
         run: dotnet tool restore
         shell: pwsh
       - name: "Dotnet Cake Build"
-        run: dotnet cake --target=Build
+        run: dotnet cake --target=BuildNPM --verbosity=Diagnostic
+        shell: pwsh
+      - name: "Dotnet Cake Build"
+        run: dotnet cake --target=Build --verbosity=Diagnostic
         shell: pwsh
       - name: "Dotnet Cake Test"
         run: dotnet cake --target=Test

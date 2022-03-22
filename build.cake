@@ -19,12 +19,26 @@ Task("Clean")
         DeleteDirectories(GetDirectories("**/obj"), new DeleteDirectorySettings() { Force = true, Recursive = true });
     });
 
+Task("RestoreNPM")
+    .Description("Restores NPM packages.")
+    .Does(() =>
+    {
+        NpmCi(x => x.FromPath(frontendDirectory));
+    });
+
+Task("BuildNPM")
+    .Description("Builds the NPM project.")
+    .IsDependentOn("RestoreNPM")
+    .Does(() =>
+    {
+        NpmRunScript("build", x => x.FromPath(frontendDirectory));
+    });
+
 Task("Restore")
     .Description("Restores NuGet packages.")
     .IsDependentOn("Clean")
     .Does(() =>
     {
-        NpmCi(x => x.FromPath(frontendDirectory));
         DotNetRestore();
     });
 
@@ -33,7 +47,6 @@ Task("Build")
     .IsDependentOn("Restore")
     .Does(() =>
     {
-        NpmRunScript("build", x => x.FromPath(frontendDirectory));
         DotNetBuild(
             ".",
             new DotNetBuildSettings()
