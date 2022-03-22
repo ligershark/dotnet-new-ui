@@ -1,14 +1,19 @@
+#addin nuget:?package=Cake.Npm&version=2.0.0
+
 var target = Argument("Target", "Default");
 var configuration =
     HasArgument("Configuration") ? Argument<string>("Configuration") :
     EnvironmentVariable("Configuration", "Release");
 
 var artefactsDirectory = Directory("./Artefacts");
+var frontendDirectory = GetDirectories("**/Frontend").First();
+var frontendDistDirectory = GetDirectories("**/Frontend/dist").First();
 
 Task("Clean")
     .Description("Cleans the artefacts, bin and obj directories.")
     .Does(() =>
     {
+        CleanDirectory(frontendDistDirectory);
         CleanDirectory(artefactsDirectory);
         DeleteDirectories(GetDirectories("**/bin"), new DeleteDirectorySettings() { Force = true, Recursive = true });
         DeleteDirectories(GetDirectories("**/obj"), new DeleteDirectorySettings() { Force = true, Recursive = true });
@@ -19,6 +24,7 @@ Task("Restore")
     .IsDependentOn("Clean")
     .Does(() =>
     {
+        NpmCi(x => x.FromPath(frontendDirectory));
         DotNetRestore();
     });
 
@@ -27,6 +33,7 @@ Task("Build")
     .IsDependentOn("Restore")
     .Does(() =>
     {
+        NpmRunScript("build", x => x.FromPath(frontendDirectory));
         DotNetBuild(
             ".",
             new DotNetBuildSettings()
