@@ -81,6 +81,10 @@ public class Program
                 }
             }
         }
+        catch (TaskCanceledException)
+        {
+            // Do nothing. The user closed the app.
+        }
         catch (Exception exception)
         {
             console.WriteException(exception);
