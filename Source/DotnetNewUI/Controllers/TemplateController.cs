@@ -17,19 +17,19 @@ public class TemplatesController
 
     // Returns template packages (one package might contain multiple templates)
     [HttpGet("online")]
-    public async Task<NuGetPackageInfo[]> GetOnlineTemplatePackagesAsync()
+    public async Task<IReadOnlyList<NuGetPackageInfo>> GetOnlineTemplatePackagesAsync()
     {
         return await this.nuGetClient.GetNuGetTemplates();
     }
 
     // Returns templates (multiple templates might belong to the same package)
     [HttpGet("installed")]
-    public async Task GetInstalledTemplatesAsync()
+    public async Task<IReadOnlyList<string>> GetInstalledTemplatesAsync()
     {
-        throw new NotImplementedException();
+        return await BuiltInTemplatePackageProvider.GetAllTemplatePackagesAsync();
     }
 
-    [HttpPut("installed/{packageId}")]
+    [HttpPost("installed/{packageId}")]
     public async Task InstallTemplatePackageAsync(string packageId)
     {
         throw new NotImplementedException();

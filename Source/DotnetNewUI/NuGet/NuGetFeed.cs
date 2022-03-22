@@ -26,7 +26,7 @@ public record class NuGetPackageInfo
     string Version,
     int TotalDownloads,
     bool Verified,
-    string[] Author,
+    string[] Authors,
     string[] Owners,
     string Title,
     string Description,

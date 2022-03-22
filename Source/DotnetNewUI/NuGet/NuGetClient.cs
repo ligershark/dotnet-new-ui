@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 public interface INuGetClient
 {
-    Task<NuGetPackageInfo[]> GetNuGetTemplates();
+    Task<IReadOnlyList<NuGetPackageInfo>> GetNuGetTemplates();
 }
 
 public class NuGetClient : INuGetClient
@@ -18,7 +18,7 @@ public class NuGetClient : INuGetClient
     public NuGetClient(HttpClient httpClient)
         => this.httpClient = httpClient;
 
-    public async Task<NuGetPackageInfo[]> GetNuGetTemplates()
+    public async Task<IReadOnlyList<NuGetPackageInfo>> GetNuGetTemplates()
     {
         var nuGetFeed = await GetNuGetFeed(NuGetUrlHelper.NuGetV3FeedUrl);
         var queryEndpoint = nuGetFeed.QueryUrl;
@@ -32,7 +32,7 @@ public class NuGetClient : INuGetClient
 
         var allTemplates = Enumerable
             .Concat(firstPage.Data, remainingPages.SelectMany(p => p.Data))
-            .ToArray();
+            .ToList();
 
         return allTemplates;
     }
