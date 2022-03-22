@@ -1,87 +1,87 @@
 namespace DotnetNewUI.NuGet;
 
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
 internal static class NuGetClient
 {
-    private const string NuGetV3FeedEndpoint = "https://api.nuget.org/v3/index.json";
-    private const string QueryResourceName = "SearchQueryService";
-    private const string IconResourceName = "PackageBaseAddress/3.0.0";
-
     private const int PageSize = 100;
+    private static readonly HttpClient HttpClient = new();
 
     public static async Task<NuGetPackageInfo[]> GetNuGetTemplates()
     {
-        var stopWatch = Stopwatch.StartNew();
+        var nuGetFeed = await GetNuGetFeed(NuGetUrlHelper.NuGetV3FeedUrl);
+        var queryEndpoint = nuGetFeed.QueryUrl;
+        var iconEndpoint = nuGetFeed.PackageIconUrl;
 
-        var nuGetFeed = await GetNuGetFeed(NuGetV3FeedEndpoint);
-        var queryEndpoint = nuGetFeed.GetResource(QueryResourceName);
-        var iconEndpoint = nuGetFeed.GetResource(IconResourceName);
+        var firstPageUrl = NuGetUrlHelper.GetTemplatePackageQueryFirstPageUrl(queryEndpoint, PageSize);
+        var firstPage = await GetPackages(firstPageUrl);
 
-        var firstPageOfTemplates = await GetTemplates(queryEndpoint.Id);
-        var remainingTemplates = await GetRemainingTemplates(queryEndpoint.Id, firstPageOfTemplates.TotalHits);
-
-        stopWatch.Stop();
+        var remainingPagesUrls = NuGetUrlHelper.GetTemplatePackageQueryRemainingPagesUrls(queryEndpoint, firstPage.TotalHits, PageSize);
+        var remainingPages = await Task.WhenAll(remainingPagesUrls.Select(url => GetPackages(url)));
 
         var allTemplates = Enumerable
-            .Concat(firstPageOfTemplates.Data, remainingTemplates)
-            .Select(t => t with { IconUrl = GetPackageIconUrl(iconEndpoint.Id, t.Id, t.Version) })
+            .Concat(firstPage.Data, remainingPages.SelectMany(p => p.Data))
+            .Select(t => t with { IconUrl = NuGetUrlHelper.GetPackageIconUrl(iconEndpoint, t.Id, t.Version) })
             .ToArray();
-
-        Console.WriteLine($"Total number of templates: {firstPageOfTemplates.TotalHits}");
-        Console.WriteLine($"Total number of downloaded templates: {allTemplates.Length}");
-        Console.WriteLine($"Download took {stopWatch.ElapsedMilliseconds}ms");
-        Console.WriteLine();
 
         return allTemplates;
     }
 
-    private static async Task<NuGetFeed> GetNuGetFeed(string url)
+    private static async Task<NuGetFeed> GetNuGetFeed(string feedEndpoint)
     {
-        var httpClient = new HttpClient();
-        var response = await httpClient.GetAsync(url);
-        response.EnsureSuccessStatusCode();
-
-        var feedResponse = await response.Content.ReadFromJsonAsync<NuGetFeed>();
-
-        return feedResponse ?? throw new NullReferenceException("No response");
+        var nuGetFeed = await HttpClient.GetFromJsonAsync<NuGetFeed>(feedEndpoint);
+        return nuGetFeed ?? throw new NullReferenceException("No response");
     }
 
-    private static async Task<NuGetQueryResponse> GetTemplates(string queryEndpoint, int page = 0)
+    private static async Task<NuGetQueryResponse> GetPackages(string url)
     {
-        const string packageType = "template";
-
-        var skip = page * PageSize;
-        var take = PageSize;
-
-        var httpClient = new HttpClient();
-        var response = await httpClient.GetAsync($"{queryEndpoint}?q=&packagetype={packageType}&skip={skip}&take={take}");
-        var typedResponse = await response.Content.ReadFromJsonAsync<NuGetQueryResponse>();
-
-        return typedResponse ?? throw new NullReferenceException("No response");
+        var queryResponse = await HttpClient.GetFromJsonAsync<NuGetQueryResponse>(url);
+        return queryResponse ?? throw new NullReferenceException("No response");
     }
+}
 
-    private static async Task<NuGetPackageInfo[]> GetRemainingTemplates(string queryEndpoint, int totalHits)
+internal static class NuGetUrlHelper
+{
+    public const string NuGetV3FeedUrl = "https://api.nuget.org/v3/index.json";
+
+    public static string GetTemplatePackageQueryUrl(string queryEndpoint, int skip, int take)
+        => $"{queryEndpoint}?q=&skip={skip}&take={take}&packagetype=template";
+
+    public static string GetTemplatePackageQueryFirstPageUrl(string queryEndpoint, int pageSize)
+        => GetTemplatePackageQueryUrl(queryEndpoint, 0, pageSize);
+
+    public static string[] GetTemplatePackageQueryRemainingPagesUrls(string queryEndpoint, int totalNumberOfItems, int pageSize)
     {
-        var numberOfPagesToDownload = (totalHits / PageSize) + 1;
+        var numberOfPagesToDownload = NuGetPagingHelper.GetNumberOfPages(totalNumberOfItems, pageSize);
 
-        var pages = Enumerable
+        var pageUrls = Enumerable
             .Range(0, numberOfPagesToDownload)
             .Skip(1)
-            .Select(i => GetTemplates(queryEndpoint, i));
+            .Select(pageNumber =>
+            {
+                var (skip, take) = NuGetPagingHelper.GetRangeOfPage(pageNumber, pageSize);
+                return GetTemplatePackageQueryUrl(queryEndpoint, skip, take);
+            })
+            .ToArray();
 
-        var downloadedPages = await Task.WhenAll(pages);
-
-        return downloadedPages.SelectMany(p => p.Data).ToArray();
+        return pageUrls;
     }
 
-    private static string GetPackageIconUrl(string baseUrl, string packageId, string packageVersion)
+    public static string GetPackageIconUrl(string baseUrl, string packageId, string packageVersion)
         => $"{baseUrl}/{packageId}/{packageVersion}/icon";
 
-    private static string GetAvatarIconUrl(string baseUrl, string profile)
+    public static string GetAvatarIconUrl(string profile)
         => $"https://www.nuget.org/profiles/{profile}/avatar?imageSize=64";
+}
+
+internal static class NuGetPagingHelper
+{
+    public static int GetNumberOfPages(int numberOfItems, int pageSize)
+        => (numberOfItems / pageSize) + 1;
+
+    public static (int Skip, int Take) GetRangeOfPage(int pageNumber, int pageSize)
+        => (pageNumber * pageSize, pageSize);
 }
