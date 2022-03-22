@@ -44,6 +44,7 @@ public static class HostBuilderExtensions
 
     private static void ConfigureWebHostBuilder(IWebHostBuilder webHostBuilder) =>
         webHostBuilder
+            .UseWebRoot(Path.Combine(Directory.GetCurrentDirectory(), "Frontend", "dist"))
             .UseKestrel(
                 options =>
                 {
@@ -58,10 +59,7 @@ public static class HostBuilderExtensions
                 app => app
                     .UseRouting()
                     .UseDefaultFiles()
-                    .UseStaticFiles(
-                        new StaticFileOptions()
-                        {
-                        })
+                    .UseStaticFiles()
                     .UseEndpoints(
                         builder =>
                         {

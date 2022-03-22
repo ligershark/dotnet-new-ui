@@ -23,4 +23,8 @@
     <PackageReference Include="System.CommandLine.Hosting" Version="0.4.0-alpha.22114.1" />
   </ItemGroup>
 
+  <ItemGroup Label="Files">
+    <Folder Include="Frontend\" />
+  </ItemGroup>
+
 </Project>
