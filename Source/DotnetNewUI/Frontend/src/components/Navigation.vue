@@ -51,7 +51,7 @@
 }
 .navigation__link--active {
   background: hsl(0, 0%, 100%);
-  color: #8821b2;
+  color: hsl(283, 69%, 41%);
   transform: scale(1.1);
 }
 </style>

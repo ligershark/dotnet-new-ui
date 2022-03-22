@@ -41,15 +41,22 @@
       </li>
     </ul>
     <p class="template__description">{{ description }}</p>
+    <ui-button class="template__install" @click="onInstallClick"
+      >💽 Install</ui-button
+    >
   </article>
 </template>
 
 <script lang="ts">
 import { defineComponent, toRefs } from "vue";
+import Button from "@/components/Button.vue";
 import ITemplate from "@/models/ITemplate";
 
 export default defineComponent({
   name: "ui-template",
+  components: {
+    "ui-button": Button,
+  },
   props: {
     template: {
       type: Object as () => ITemplate,
@@ -58,8 +65,13 @@ export default defineComponent({
   },
   setup(props) {
     let { template } = toRefs(props);
-    console.log(template.value);
+
+    function onInstallClick(event: PointerEvent) {
+      console.log("Install", event);
+    }
+
     return {
+      onInstallClick,
       ...template.value,
     };
   },
@@ -72,12 +84,12 @@ export default defineComponent({
   column-gap: 10px;
   row-gap: 4px;
   grid-template-areas:
-    "icon title"
-    "icon statistics"
-    "icon tags"
-    "icon description"
-    "icon .";
-  grid-template-columns: auto 1fr;
+    "icon title install"
+    "icon statistics install"
+    "icon tags install"
+    "icon description install"
+    "icon . install";
+  grid-template-columns: auto 1fr auto;
   grid-template-rows: auto auto auto auto 1fr;
 }
 
@@ -137,5 +149,11 @@ export default defineComponent({
   overflow-wrap: break-word;
   word-wrap: break-word;
   word-break: break-word;
+}
+
+.template__install {
+  grid-area: install;
+
+  align-self: start;
 }
 </style>
