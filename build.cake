@@ -6,8 +6,8 @@ var configuration =
     EnvironmentVariable("Configuration", "Release");
 
 var artefactsDirectory = Directory("./Artefacts");
-var frontendDirectory = GetDirectories("**/Frontend").First();
-var frontendDistDirectory = GetDirectories("**/Frontend/dist").First();
+var frontendDirectory = GetDirectories("Source/DotnetNewUI/Frontend").First();
+var frontendDistDirectory = GetDirectories("Source/DotnetNewUI/Frontend/dist").First();
 
 Task("Clean")
     .Description("Cleans the artefacts, bin and obj directories.")
@@ -83,6 +83,36 @@ Task("Pack")
                 NoRestore = true,
                 OutputDirectory = artefactsDirectory,
             });
+    });
+
+Task("Install")
+    .Description("Install the dotnet tool globally.")
+    .Does(() =>
+    {
+        StartProcess(
+            "dotnet",
+            new ProcessSettings()
+                .WithArguments(x => x
+                    .Append("tool")
+                    .Append("install")
+                    .Append("--global")
+                    .Append("--no-cache")
+                    .AppendSwitch("--add-source", "./Artefacts")
+                    .Append("new-ui")));
+    });
+
+Task("Uninstall")
+    .Description("Uninstall the dotnet tool globally.")
+    .Does(() =>
+    {
+        StartProcess(
+            "dotnet",
+            new ProcessSettings()
+                .WithArguments(x => x
+                    .Append("tool")
+                    .Append("uninstall")
+                    .Append("--global")
+                    .Append("new-ui")));
     });
 
 Task("Default")
