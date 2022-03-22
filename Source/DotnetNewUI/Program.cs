@@ -17,6 +17,7 @@ public class Program
             new string[] { "-p", "--port" },
             () => PortService.DefaultPort,
             "The port to run the application on.");
+
         var noBrowserOption = new Option<bool>(
             new string[] { "-n", "--no-browser" },
             "Disable opening the browser.");
@@ -26,6 +27,7 @@ public class Program
             portOption,
             noBrowserOption,
         };
+
         rootCommand.SetHandler(
             (Func<IHost, int, bool, CancellationToken, Task>)OnHandleAsync,
             portOption,
@@ -34,6 +36,7 @@ public class Program
         var commandLineBuilder = new CommandLineBuilder(rootCommand)
             .UseHost(hostBuilder => hostBuilder.ConfigureHost())
             .UseDefaults();
+
         var parser = commandLineBuilder.Build();
         return await parser.InvokeAsync(arguments).ConfigureAwait(false);
     }
@@ -69,15 +72,7 @@ public class Program
                 urlOpenerService.Open(url);
             }
 
-            while (true)
-            {
-                if (!cancellationToken.IsCancellationRequested)
-                {
-                    await Task
-                        .Delay(100, cancellationToken)
-                        .ConfigureAwait(false);
-                }
-            }
+            await WaitForCancellation(cancellationToken).ConfigureAwait(false);
         }
         catch (TaskCanceledException)
         {
@@ -90,5 +85,20 @@ public class Program
             console.WriteLine();
             console.WriteException(exception);
         }
+    }
+
+    private static Task WaitForCancellation(CancellationToken cancellationToken)
+    {
+        var tcs = new TaskCompletionSource();
+        if (cancellationToken.IsCancellationRequested)
+        {
+            tcs.SetResult();
+        }
+        else
+        {
+            var registration = cancellationToken.Register(() => tcs.SetResult());
+        }
+
+        return tcs.Task;
     }
 }

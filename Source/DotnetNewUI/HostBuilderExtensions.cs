@@ -1,6 +1,8 @@
 namespace DotnetNewUI;
 
 using System.Diagnostics;
+using System.Reflection;
+using DotnetNewUI.NuGet;
 using DotnetNewUI.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -35,12 +37,15 @@ public static class HostBuilderExtensions
     private static void ConfigureServices(HostBuilderContext context, IServiceCollection services) =>
         services
             .AddControllers()
+            .AddApplicationPart(Assembly.GetExecutingAssembly()) // Needed for some reason to actually discover the API Controller
             .Services
             .AddEndpointsApiExplorer()
             .AddSwaggerGen()
             .AddSingleton(AnsiConsole.Console)
             .AddSingleton<IPortService, PortService>()
-            .AddSingleton<IUrlOpenerService, UrlOpenerService>();
+            .AddSingleton<IUrlOpenerService, UrlOpenerService>()
+            .AddSingleton<INuGetClient, NuGetClient>()
+            .AddHttpClient();
 
     private static void ConfigureWebHostBuilder(IWebHostBuilder webHostBuilder) =>
         webHostBuilder
@@ -60,6 +65,9 @@ public static class HostBuilderExtensions
                     .UseRouting()
                     .UseDefaultFiles()
                     .UseStaticFiles()
+                        new StaticFileOptions()
+                        {
+                        })
                     .UseEndpoints(
                         builder =>
                         {

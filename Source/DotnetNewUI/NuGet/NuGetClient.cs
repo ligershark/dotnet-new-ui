@@ -5,12 +5,12 @@ using System.Linq;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 
-internal interface INuGetClient
+public interface INuGetClient
 {
     Task<NuGetPackageInfo[]> GetNuGetTemplates();
 }
 
-internal class NuGetClient : INuGetClient
+public class NuGetClient : INuGetClient
 {
     private const int PageSize = 100;
     private readonly HttpClient httpClient;
