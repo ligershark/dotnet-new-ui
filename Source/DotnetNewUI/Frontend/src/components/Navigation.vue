@@ -24,6 +24,7 @@
 <style type="scss">
 .navigation {
   display: flex;
+  flex-wrap: wrap;
   gap: 20px;
   justify-content: center;
 
@@ -49,7 +50,8 @@
   transform: scale(1.1);
 }
 .navigation__link--active {
-  border: 1px solid hsl(0, 0%, 100%);
+  background: hsl(0, 0%, 100%);
+  color: #8821b2;
   transform: scale(1.1);
 }
 </style>

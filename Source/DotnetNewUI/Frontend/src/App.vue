@@ -1,4 +1,9 @@
 <template>
+  <metainfo>
+    <template v-slot:title="{ content }">{{
+      content ? `${content} | .NET New UI` : `.NET New UI`
+    }}</template>
+  </metainfo>
   <ui-navigation />
   <router-view />
 </template>
