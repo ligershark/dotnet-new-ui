@@ -56,11 +56,14 @@ public static class HostBuilderExtensions
                     options.Configure(portService.Configuration, reloadOnChange: true);
                 })
             .Configure(
-                app =>
-                {
-                    app.UseRouting();
-                    app.UseEndpoints(endpointBuilder => endpointBuilder.MapControllers());
-                    app.UseSwagger();
-                    app.UseSwaggerUI();
-                });
+                app => app
+                    .UseRouting()
+                    .UseStaticFiles()
+                    .UseEndpoints(
+                        builder =>
+                        {
+                            builder.MapControllers();
+                            builder.MapSwagger();
+                        })
+                    .UseSwaggerUI());
 }
