@@ -7,10 +7,11 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
+  <!-- TODO: Disable strong name signing until Spectre.Console supports it in https://github.com/spectreconsole/spectre.console/issues/481.
   <PropertyGroup Label="Signing">
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>../../Key.snk</AssemblyOriginatorKeyFile>
-  </PropertyGroup>
+  </PropertyGroup>-->
 
   <PropertyGroup Label="Source Link">
     <!-- Optional: Declare that the Repository URL can be published to NuSpec -->

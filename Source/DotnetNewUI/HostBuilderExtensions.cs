@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Spectre.Console;
 
 public static class HostBuilderExtensions
 {
@@ -37,6 +38,7 @@ public static class HostBuilderExtensions
             .Services
             .AddEndpointsApiExplorer()
             .AddSwaggerGen()
+            .AddSingleton(AnsiConsole.Console)
             .AddSingleton<IPortService, PortService>()
             .AddSingleton<IUrlOpenerService, UrlOpenerService>();
 

@@ -2,7 +2,7 @@
   "profiles": {
     "DotnetNewUI": {
       "commandName": "Project",
-      "commandLineArgs": "--no-browser --port 5003"
+      "commandLineArgs": "--no-browser"
     }
   }
 }
