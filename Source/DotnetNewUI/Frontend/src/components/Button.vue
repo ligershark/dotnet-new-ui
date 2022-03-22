@@ -21,7 +21,7 @@ export default defineComponent({
   cursor: pointer;
   font-size: 1.25rem;
   line-height: 1.5;
-  min-width: 180px;
+  min-width: 160px;
   padding: 0.5rem 1rem;
   text-align: center;
   text-decoration: none;

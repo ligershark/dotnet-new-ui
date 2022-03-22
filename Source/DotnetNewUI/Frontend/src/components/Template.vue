@@ -1,11 +1,10 @@
 <template>
   <article class="template">
     <img
-      v-if="template.iconUrl"
       class="template__icon"
       width="256"
       height="256"
-      :src="template.iconUrl"
+      :src="iconWithFallbackUrl"
     />
     <div class="template__title">
       <h2 class="template__title-heading">
@@ -48,8 +47,9 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, toRefs } from "vue";
+import { computed, defineComponent, toRefs } from "vue";
 import Button from "@/components/Button.vue";
+import useFetch from "@/composables/Fetch";
 import ITemplate from "@/models/ITemplate";
 
 export default defineComponent({
@@ -66,12 +66,27 @@ export default defineComponent({
   setup(props) {
     let { template } = toRefs(props);
 
-    function onInstallClick(event: PointerEvent) {
-      console.log("Install", event);
+    const iconWithFallbackUrl = computed(() => {
+      return (
+        template.value.iconUrl || "/static/images/default-package-icon.svg"
+      );
+    });
+
+    async function onInstallClick(event: MouseEvent) {
+      console.log(template.value, event);
+
+      const url = `http://localhost:4999/Templates/installed/${template.value.id}`;
+      const { data, error } = await useFetch<Array<ITemplate>>(url, "POST");
+      if (data.value) {
+        console.log("Installed", template.value, event);
+      } else if (error.value) {
+        console.error(error.value);
+      }
     }
 
     return {
       onInstallClick,
+      iconWithFallbackUrl,
       ...template.value,
     };
   },
@@ -96,8 +111,8 @@ export default defineComponent({
 .template__icon {
   grid-area: icon;
 
-  width: 100px;
-  height: 100px;
+  width: 80px;
+  height: 80px;
 }
 
 .template__title {
