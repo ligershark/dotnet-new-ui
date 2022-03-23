@@ -4,9 +4,9 @@
     <input
       type="search"
       placeholder="Template package search e.g. Boxed.Templates" />
-    <div class="search__templates">
-      <ui-card v-for="template in templates" v-bind:key="template.id">
-        <ui-template :template="template" />
+    <div class="search__packages">
+      <ui-card v-for="pack in packages" v-bind:key="pack.id">
+        <ui-package :pack="pack" />
       </ui-card>
     </div>
   </div>
@@ -16,34 +16,34 @@
 import { defineComponent, onMounted, ref } from "vue";
 import { useMeta } from "vue-meta";
 import Card from "@/components/Card.vue";
-import Template from "@/components/Template.vue";
+import Package from "@/components/Package.vue";
 import { useSearch } from "@/composables/Templates";
-import ITemplate from "@/models/ITemplate";
+import IPackage from "@/models/IPackage";
 
 export default defineComponent({
   name: "SearchView",
   components: {
     "ui-card": Card,
-    "ui-template": Template,
+    "ui-package": Package,
   },
   setup() {
     useMeta({
       title: "Search",
     });
 
-    let templates = ref<ITemplate[] | null>(null);
+    let packages = ref<IPackage[] | null>(null);
 
     onMounted(async () => {
       const { data, error } = await useSearch();
       if (data.value) {
-        templates.value = data.value;
+        packages.value = data.value;
       } else if (error.value) {
         console.error(error.value);
       }
     });
 
     return {
-      templates,
+      packages,
     };
   },
 });
@@ -57,7 +57,7 @@ export default defineComponent({
   padding: 20px;
 }
 
-.search__templates {
+.search__packages {
   display: grid;
   gap: 20px;
   justify-content: center;

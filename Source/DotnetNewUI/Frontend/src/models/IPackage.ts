@@ -1,4 +1,4 @@
-export default interface ITemplate {
+export default interface IPackage {
   readonly authors: string[];
   readonly description: string;
   readonly iconUrl: string;
