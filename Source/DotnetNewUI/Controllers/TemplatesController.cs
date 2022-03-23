@@ -15,4 +15,8 @@ public class TemplatesController
     [HttpGet]
     public async Task<IReadOnlyList<CompositeTemplateManifest>> GetAsync()
         => await this.templatesService.GetInstalledTemplatesAsync().ConfigureAwait(false);
+
+    [HttpPost("{templateShortName}")]
+    public async Task CreateNewFromTemplateAsync(string templateShortName, string name, string outputPath)
+        => await this.templatesService.CreateNewFromTemplateAsync(templateShortName, name, outputPath).ConfigureAwait(false);
 }

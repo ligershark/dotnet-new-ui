@@ -21,4 +21,7 @@ public class TemplatesService : ITemplatesService
 
         return manifests;
     }
+
+    public async Task CreateNewFromTemplateAsync(string templateShortName, string name, string outputPath)
+        => await SimpleExec.Command.RunAsync("dotnet", $"new {templateShortName} --name {name} --output {outputPath}").ConfigureAwait(false);
 }
