@@ -53,6 +53,8 @@ public static class HostBuilderExtensions
             .AddSingleton<IPortService, PortService>()
             .AddSingleton<IUrlOpenerService, UrlOpenerService>()
             .AddSingleton<INuGetClient, NuGetClient>()
+            .AddSingleton<IPackagesService, PackagesService>()
+            .AddSingleton<ITemplatesService, TemplatesService>()
             .AddHttpClient();
 
     private static void ConfigureWebHostBuilder(IWebHostBuilder webHostBuilder) =>

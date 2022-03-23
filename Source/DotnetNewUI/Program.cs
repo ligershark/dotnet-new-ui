@@ -47,6 +47,12 @@ public class Program
 
         try
         {
+            {
+                // Warm up the online package cache
+                var packageService = host.Services.GetRequiredService<IPackagesService>();
+                _ = packageService.GetTemplatePackagesAsync();
+            }
+
             var portService = host.Services.GetRequiredService<IPortService>();
             portService.Port = port;
 

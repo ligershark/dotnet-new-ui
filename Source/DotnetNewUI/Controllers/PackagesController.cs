@@ -1,47 +1,31 @@
 namespace DotnetNewUI.Controllers;
 
 using DotnetNewUI.NuGet;
+using DotnetNewUI.Services;
 using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("[controller]")]
 public class PackagesController
 {
-    private readonly INuGetClient nuGetClient;
+    private readonly IPackagesService packagesService;
 
-    public PackagesController(INuGetClient nuGetClient) => this.nuGetClient = nuGetClient;
+    public PackagesController(IPackagesService packagesService)
+        => this.packagesService = packagesService;
 
     [HttpGet]
-    public async Task<IReadOnlyList<NuGetPackageInfo>> GetAsync()
-    {
-        var onlineTemplates = await this.nuGetClient.GetNuGetTemplatesAsync().ConfigureAwait(false);
-
-        var installedTemplates = InstalledTemplatePackageProvider
-            .GetAllTemplatePackages()
-            .Select(x => PackageInspector.GetPackageNameAndVersion(x))
-            .ToDictionary(x => x.PackageName, x => x.Version);
-
-        return onlineTemplates
-            .Select(x =>
-            {
-                if (installedTemplates.TryGetValue(x.Id, out var installedVersion))
-                {
-                    return x with { IsInstalled = true, InstalledVersion = installedVersion };
-                }
-                else
-                {
-                    return x with { IsInstalled = false };
-                }
-            })
-            .ToList();
-    }
+    public async Task<IReadOnlyList<NuGetPackageInfo>> GetTemplatePackagesAsync()
+        => await this.packagesService.GetTemplatePackagesAsync().ConfigureAwait(false);
 
     [HttpPost("{packageId}")]
-    public Task InstallTemplatePackageAsync(string packageId) => throw new NotImplementedException();
+    public async Task InstallTemplatePackageAsync(string packageId)
+        => await this.packagesService.InstallTemplatePackageAsync(packageId).ConfigureAwait(false);
 
     [HttpDelete("{packageId}")]
-    public Task UninstallTemplatePackageAsync(string packageId) => throw new NotImplementedException();
+    public async Task UninstallTemplatePackageAsync(string packageId)
+        => await this.packagesService.UninstallTemplatePackageAsync(packageId).ConfigureAwait(false);
 
     [HttpPatch("{packageId}")]
-    public Task UpdateTemplatePackageAsync(string packageId) => throw new NotImplementedException();
+    public async Task UpdateTemplatePackageAsync(string packageId)
+        => await this.packagesService.UpdateTemplatePackageAsync(packageId).ConfigureAwait(false);
 }
