@@ -6,5 +6,5 @@ public interface ITemplatesService
 {
     Task<IReadOnlyList<CompositeTemplateManifest>> GetInstalledTemplatesAsync();
 
-    Task CreateNewFromTemplateAsync(string templateShortName, string name, string outputPath);
+    Task CreateNewFromTemplateAsync(string templateShortName, string outputPath, string? name, string? language);
 }

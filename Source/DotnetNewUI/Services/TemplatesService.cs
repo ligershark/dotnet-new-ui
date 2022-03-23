@@ -22,6 +22,17 @@ public class TemplatesService : ITemplatesService
         return manifests;
     }
 
-    public async Task CreateNewFromTemplateAsync(string templateShortName, string name, string outputPath)
-        => await SimpleExec.Command.RunAsync("dotnet", $"new {templateShortName} --name {name} --output {outputPath}").ConfigureAwait(false);
+    public async Task CreateNewFromTemplateAsync(string templateShortName, string outputPath, string? name, string? language)
+    {
+        var arguments = new (string Name, string? Value)[]
+        {
+            ("output", outputPath),
+            ("name", name),
+            ("language", language),
+        };
+
+        var argumentsStr = string.Join(' ', arguments.Where(x => x.Value is not null).Select(x => $"--{x.Name} \"{x.Value}\""));
+
+        await SimpleExec.Command.RunAsync("dotnet", $"new {templateShortName} {argumentsStr}").ConfigureAwait(false);
+    }
 }
