@@ -74,8 +74,6 @@ export default defineComponent({
     });
 
     async function onInstallClick(event: MouseEvent) {
-      console.log(template.value, event);
-
       const url = `http://localhost:4999/Templates/installed/${template.value.id}`;
       const { data, error } = await useFetch<Array<ITemplate>>(url, "POST");
       if (data.value) {
