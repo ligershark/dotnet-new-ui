@@ -21,6 +21,7 @@ public record class TemplateIdeHostManifest(string? Icon);
 
 public record CompositeTemplateManifest(
     string PackageName,
+    string Version,
     string? Base64Icon,
     TemplateManifest TemplateManifest,
     TemplateIdeHostManifest? TemplateIdeHostManifest);
