@@ -6,7 +6,6 @@
       placeholder="Template package search e.g. Boxed.Templates"
       v-model="query" />
     <div class="installed__packages">
-      {{ packages?.length }}
       <ui-card v-for="pack in filteredPackages" v-bind:key="pack.id">
         <ui-package :pack="pack" />
       </ui-card>
@@ -49,7 +48,6 @@ export default defineComponent({
       const { data, error } = await usePackages();
       if (data.value) {
         packages.value = data.value.filter((x) => x.isInstalled);
-        console.log(data.value, packages.value);
       } else if (error.value) {
         console.error(error.value);
       }

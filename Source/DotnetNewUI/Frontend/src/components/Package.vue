@@ -74,19 +74,19 @@ export default defineComponent({
       return pack.value.iconUrl || "/static/images/default-package-icon.svg";
     });
 
-    async function onInstallClick(event: MouseEvent) {
+    async function onInstallClick() {
       const { data, error } = await usePackageInstall(pack.value.id);
       if (data.value) {
-        console.log("Installed", pack.value, event);
+        alert(`${pack.value.title} installed!`);
       } else if (error.value) {
         console.error(error.value);
       }
     }
 
-    async function onUninstallClick(event: MouseEvent) {
+    async function onUninstallClick() {
       const { data, error } = await usePackageUninstall(pack.value.id);
       if (data.value) {
-        console.log("Uninstall", pack.value, event);
+        alert(`${pack.value.title} uninstalled!`);
       } else if (error.value) {
         console.error(error.value);
       }
