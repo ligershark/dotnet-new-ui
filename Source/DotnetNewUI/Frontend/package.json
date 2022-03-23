@@ -34,5 +34,9 @@
   },
   "gitHooks": {
     "pre-commit": "lint-staged"
+  },
+  "prettier": {
+    "bracketSameLine": true,
+    "endOfLine": "auto"
   }
 }
