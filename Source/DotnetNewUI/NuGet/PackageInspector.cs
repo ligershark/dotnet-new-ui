@@ -14,7 +14,12 @@ public static class PackageInspector
 
     public static IReadOnlyList<CompositeTemplateManifest> GetTemplateManifestsFromPackage(string packagePath)
     {
-        var packageName = Path.GetFileName(packagePath);
+        var packageFileName = Path.GetFileName(packagePath);
+
+        var packageNameRegex = new Regex("^(?<packagename>.*)\\.(?<version>\\d*\\.\\d*\\.\\d*-?.*)\\.nupkg$");
+        var match = packageNameRegex.Match(packageFileName);
+        var packageName = match.Groups["packagename"].Value;
+        var packageVersion = match.Groups["version"].Value;
 
         using var file = File.OpenRead(packagePath);
         var package = new ZipArchive(file);
@@ -34,7 +39,7 @@ public static class PackageInspector
                 var ideHostManifest = TryGetIdeHostManifest(archive, parentDirectory);
                 var base64Icon = TryGetBase64Icon(archive, parentDirectory, ideHostManifest?.Icon);
 
-                return new CompositeTemplateManifest(packageName, base64Icon, templateManifest, ideHostManifest);
+                return new CompositeTemplateManifest(packageName, packageVersion, base64Icon, templateManifest, ideHostManifest);
             })
             .ToList();
 
