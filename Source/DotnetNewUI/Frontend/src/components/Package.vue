@@ -2,6 +2,7 @@
   <article class="package">
     <img
       class="package__icon"
+      alt=""
       loading="lazy"
       :src="iconWithFallbackUrl"
       width="256"
@@ -30,17 +31,15 @@
       <p class="package__last-updated">⏳ last updated</p>
       <p class="package__version">🚀 Latest version: {{ version }}</p>
     </div>
-    <ul v-if="tags.length > 0" class="package__tags">
-      <li v-for="tag in tags" v-bind:key="tag" class="package__tag">
-        <a
-          class="package__tag-link"
-          :href="`https://www.nuget.org/packages?q=Tags:%22${tag}%22`"
-          >🏷️ {{ tag }}</a
-        >
-      </li>
-    </ul>
+    <ui-tags v-if="tags.length > 0" class="package__tags" :tags="tags" />
     <p class="package__description">{{ description }}</p>
-    <ui-button class="package__install" @click="onInstallClick"
+    <ui-button
+      v-if="isInstalled"
+      class="package__uninstall"
+      @click="onUninstallClick"
+      >☠️ Uninstall</ui-button
+    >
+    <ui-button v-else class="package__install" @click="onInstallClick"
       >💽 Install</ui-button
     >
   </article>
@@ -49,13 +48,18 @@
 <script lang="ts">
 import { computed, defineComponent, toRefs } from "vue";
 import Button from "@/components/Button.vue";
-import { useInstall, useUninstall } from "@/composables/Templates";
+import Tags from "@/components/Tags.vue";
+import {
+  usePackageInstall,
+  usePackageUninstall,
+} from "@/composables/Templates";
 import IPackage from "@/models/IPackage";
 
 export default defineComponent({
   name: "ui-package",
   components: {
     "ui-button": Button,
+    "ui-tags": Tags,
   },
   props: {
     pack: {
@@ -71,7 +75,7 @@ export default defineComponent({
     });
 
     async function onInstallClick(event: MouseEvent) {
-      const { data, error } = await useInstall(pack.value.id);
+      const { data, error } = await usePackageInstall(pack.value.id);
       if (data.value) {
         console.log("Installed", pack.value, event);
       } else if (error.value) {
@@ -80,7 +84,7 @@ export default defineComponent({
     }
 
     async function onUninstallClick(event: MouseEvent) {
-      const { data, error } = await useUninstall(pack.value.id);
+      const { data, error } = await usePackageUninstall(pack.value.id);
       if (data.value) {
         console.log("Uninstall", pack.value, event);
       } else if (error.value) {
@@ -90,6 +94,7 @@ export default defineComponent({
 
     return {
       onInstallClick,
+      onUninstallClick,
       iconWithFallbackUrl,
       ...pack.value,
     };
@@ -134,6 +139,9 @@ export default defineComponent({
 .package__title-heading-link:hover {
   text-decoration: underline;
 }
+.package__title-heading-link:not([href]):hover {
+  text-decoration: none;
+}
 
 .package__statistics {
   grid-area: statistics;
@@ -146,20 +154,6 @@ export default defineComponent({
 
 .package__tags {
   grid-area: tags;
-
-  display: flex;
-  align-items: baseline;
-  column-gap: 20px;
-  flex-wrap: wrap;
-
-  list-style: none;
-}
-.package__tag-link {
-  color: hsl(0, 0%, 100%);
-  text-decoration: none;
-}
-.package__tag-link:hover {
-  text-decoration: underline;
 }
 
 .package__description {

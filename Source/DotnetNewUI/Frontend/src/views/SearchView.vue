@@ -18,7 +18,7 @@ import { computed, defineComponent, onMounted, ref } from "vue";
 import { useMeta } from "vue-meta";
 import Card from "@/components/Card.vue";
 import Package from "@/components/Package.vue";
-import { useSearch } from "@/composables/Templates";
+import { usePackages } from "@/composables/Templates";
 import IPackage from "@/models/IPackage";
 
 export default defineComponent({
@@ -45,7 +45,7 @@ export default defineComponent({
     });
 
     onMounted(async () => {
-      const { data, error } = await useSearch();
+      const { data, error } = await usePackages();
       if (data.value) {
         packages.value = data.value;
       } else if (error.value) {
@@ -69,7 +69,7 @@ export default defineComponent({
   padding: 20px;
 }
 
-.search__packages {
+.search__templates {
   display: grid;
   gap: 20px;
 }

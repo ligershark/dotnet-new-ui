@@ -11,4 +11,6 @@ export default interface IPackage {
   readonly totalDownloads: number;
   readonly verified: boolean;
   readonly version: string;
+  readonly isInstalled: boolean;
+  readonly installedVersion: string;
 }

@@ -18,7 +18,7 @@ import { computed, defineComponent, onMounted, ref } from "vue";
 import { useMeta } from "vue-meta";
 import Card from "@/components/Card.vue";
 import Package from "@/components/Package.vue";
-import { useInstalled } from "@/composables/Templates";
+import { usePackages } from "@/composables/Templates";
 import IPackage from "@/models/IPackage";
 
 export default defineComponent({
@@ -45,10 +45,10 @@ export default defineComponent({
     });
 
     onMounted(async () => {
-      const { data, error } = await useInstalled();
-      console.log(data.value, error.value);
+      const { data, error } = await usePackages();
       if (data.value) {
-        packages.value = data.value;
+        packages.value = data.value.filter((x) => x.isInstalled);
+        console.log(packages.value);
       } else if (error.value) {
         console.error(error.value);
       }

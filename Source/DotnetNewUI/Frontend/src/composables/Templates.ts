@@ -7,27 +7,22 @@ if (process.env.NODE_ENV === "development") {
   origin = "http://localhost:4999";
 }
 
-export async function useSearch(): Promise<IResult<IPackage[]>> {
-  const url = `${origin}/Templates/online`;
+export async function usePackages(): Promise<IResult<IPackage[]>> {
+  const url = `${origin}/Packages`;
   return await useFetch<Array<IPackage>>(url);
 }
 
-export async function useInstalled(): Promise<IResult<IPackage[]>> {
-  const url = `${origin}/Templates/installed`;
-  return await useFetch<Array<IPackage>>(url);
-}
-
-export async function useTemplates(): Promise<IResult<ITemplate[]>> {
-  const url = `${origin}/Templates/installed`;
-  return await useFetch<Array<ITemplate>>(url);
-}
-
-export async function useInstall(id: string) {
+export async function usePackageInstall(id: string) {
   const url = `${origin}/Templates/installed/${id}`;
   return await useFetch<string>(url, "POST");
 }
 
-export async function useUninstall(id: string) {
+export async function usePackageUninstall(id: string) {
   const url = `${origin}/Templates/installed/${id}`;
   return await useFetch<string>(url, "DELETE");
+}
+
+export async function useTemplates(): Promise<IResult<ITemplate[]>> {
+  const url = `${origin}/Templates`;
+  return await useFetch<Array<ITemplate>>(url);
 }
