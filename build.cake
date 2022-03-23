@@ -36,7 +36,6 @@ Task("BuildNPM")
 
 Task("Restore")
     .Description("Restores NuGet packages.")
-    .IsDependentOn("Clean")
     .Does(() =>
     {
         DotNetRestore();
@@ -130,6 +129,9 @@ Task("Uninstall")
 
 Task("Default")
     .Description("Cleans, restores NuGet packages, builds the solution, runs unit tests and then creates NuGet packages.")
+    .IsDependentOn("Clean")
+    .IsDependentOn("RestoreNPM")
+    .IsDependentOn("BuildNPM")
     .IsDependentOn("Build")
     .IsDependentOn("Test")
     .IsDependentOn("Pack");
