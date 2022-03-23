@@ -18,7 +18,7 @@ public class TemplatesController
 
     // Returns templates (multiple templates might belong to the same package)
     [HttpGet("installed")]
-    public async Task<IReadOnlyList<TemplateManifest>> GetInstalledTemplatesAsync()
+    public async Task<IReadOnlyList<CompositeTemplateManifest>> GetInstalledTemplatesAsync()
     {
         var templatePackages = await BuiltInTemplatePackageProvider.GetAllTemplatePackagesAsync().ConfigureAwait(false);
 
