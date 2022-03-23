@@ -17,11 +17,12 @@ public record class TemplateManifest(
 
 public record class TemplateTags(string Language, string Type);
 
-public record class TemplateIdeHostManifest(string? Icon);
+public record class TemplateIdeHostManifest(string? Icon, string? LearnMoreLink);
 
 public record CompositeTemplateManifest(
     string PackageName,
     string Version,
     string? Base64Icon,
+    bool IsBuiltIn,
     TemplateManifest TemplateManifest,
-    TemplateIdeHostManifest? TemplateIdeHostManifest);
+    TemplateIdeHostManifest? IdeHostManifest);

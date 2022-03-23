@@ -20,10 +20,17 @@ public class TemplatesController
     [HttpGet("installed")]
     public async Task<IReadOnlyList<CompositeTemplateManifest>> GetInstalledTemplatesAsync()
     {
-        var templatePackages = await BuiltInTemplatePackageProvider.GetAllTemplatePackagesAsync().ConfigureAwait(false);
+        var builtInTemplatePackages = await BuiltInTemplatePackageProvider.GetAllTemplatePackagesAsync().ConfigureAwait(false);
+        var installedTemplatePackages = InstalledTemplatePackageProvider.GetAllTemplatePackages();
 
-        var manifests = templatePackages
-            .SelectMany(path => PackageInspector.GetTemplateManifestsFromPackage(path))
+        var builtInTemplates = builtInTemplatePackages
+            .SelectMany(path => PackageInspector.GetTemplateManifestsFromPackage(path, true));
+
+        var installedTemplates = installedTemplatePackages
+            .SelectMany(path => PackageInspector.GetTemplateManifestsFromPackage(path, false));
+
+        var manifests = Enumerable
+            .Concat(builtInTemplates, installedTemplates)
             .ToList();
 
         return manifests;

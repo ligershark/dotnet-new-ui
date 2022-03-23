@@ -12,7 +12,7 @@ public static class PackageInspector
         ReadCommentHandling = JsonCommentHandling.Skip,
     };
 
-    public static IReadOnlyList<CompositeTemplateManifest> GetTemplateManifestsFromPackage(string packagePath)
+    public static IReadOnlyList<CompositeTemplateManifest> GetTemplateManifestsFromPackage(string packagePath, bool isBuiltIn)
     {
         var packageFileName = Path.GetFileName(packagePath);
 
@@ -39,7 +39,7 @@ public static class PackageInspector
                 var ideHostManifest = TryGetIdeHostManifest(archive, parentDirectory);
                 var base64Icon = TryGetBase64Icon(archive, parentDirectory, ideHostManifest?.Icon);
 
-                return new CompositeTemplateManifest(packageName, packageVersion, base64Icon, templateManifest, ideHostManifest);
+                return new CompositeTemplateManifest(packageName, packageVersion, base64Icon, isBuiltIn, templateManifest, ideHostManifest);
             })
             .ToList();
 
