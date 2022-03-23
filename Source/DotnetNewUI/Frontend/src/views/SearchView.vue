@@ -69,7 +69,7 @@ export default defineComponent({
   padding: 20px;
 }
 
-.search__templates {
+.search__packages {
   display: grid;
   gap: 20px;
 }
