@@ -3,8 +3,7 @@
     <h1 class="search__title">Search</h1>
     <input
       type="search"
-      placeholder="Template package search e.g. Boxed.Templates"
-    />
+      placeholder="Template package search e.g. Boxed.Templates" />
     <div class="search__templates">
       <ui-card v-for="template in templates" v-bind:key="template.id">
         <ui-template :template="template" />

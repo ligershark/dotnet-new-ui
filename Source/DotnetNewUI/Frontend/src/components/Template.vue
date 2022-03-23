@@ -5,8 +5,7 @@
       loading="lazy"
       :src="iconWithFallbackUrl"
       width="256"
-      height="256"
-    />
+      height="256" />
     <div class="template__title">
       <h2 class="template__title-heading">
         <a class="template__title-heading-link" :href="projectUrl"
