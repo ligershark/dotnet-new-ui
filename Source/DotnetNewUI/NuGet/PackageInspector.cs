@@ -80,6 +80,7 @@ public static class PackageInspector
         if (relativeIconPath is not null)
         {
             var iconFilePath = Path.Combine(parentDirectory, relativeIconPath).Replace("\\", "/");
+            var iconFileType = Path.GetExtension(iconFilePath);
             var iconFile = archive.Entries.FirstOrDefault(e => e.FullName == iconFilePath);
 
             if (iconFile is not null)
@@ -90,7 +91,7 @@ public static class PackageInspector
                 var bytes = memoryStream.ToArray();
                 var base64Icon = Convert.ToBase64String(bytes);
 
-                return base64Icon;
+                return $"data:image/{iconFileType[1..]};base64,{base64Icon}";
             }
         }
 
