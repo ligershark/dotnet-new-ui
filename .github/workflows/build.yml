@@ -51,6 +51,9 @@ jobs:
       - name: "Dotnet Tool Restore"
         run: dotnet tool restore
         shell: pwsh
+      - name: "Dotnet Cake Build NPM"
+        run: dotnet cake --target=BuildNPM --verbosity=Diagnostic
+        shell: pwsh
       - name: "Dotnet Cake Build"
         run: dotnet cake --target=Build --verbosity=Diagnostic
         shell: pwsh
