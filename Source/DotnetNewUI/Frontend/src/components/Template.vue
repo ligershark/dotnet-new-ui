@@ -49,7 +49,7 @@
 <script lang="ts">
 import { computed, defineComponent, toRefs } from "vue";
 import Button from "@/components/Button.vue";
-import useFetch from "@/composables/Fetch";
+import { useInstall, useUninstall } from "@/composables/Templates";
 import ITemplate from "@/models/ITemplate";
 
 export default defineComponent({
@@ -73,10 +73,18 @@ export default defineComponent({
     });
 
     async function onInstallClick(event: MouseEvent) {
-      const url = `http://localhost:4999/Templates/installed/${template.value.id}`;
-      const { data, error } = await useFetch<Array<ITemplate>>(url, "POST");
+      const { data, error } = await useInstall(template.value.id);
       if (data.value) {
         console.log("Installed", template.value, event);
+      } else if (error.value) {
+        console.error(error.value);
+      }
+    }
+
+    async function onUninstallClick(event: MouseEvent) {
+      const { data, error } = await useUninstall(template.value.id);
+      if (data.value) {
+        console.log("Uninstall", template.value, event);
       } else if (error.value) {
         console.error(error.value);
       }

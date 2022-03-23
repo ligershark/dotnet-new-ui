@@ -17,7 +17,7 @@ import { defineComponent, onMounted, ref } from "vue";
 import { useMeta } from "vue-meta";
 import Card from "@/components/Card.vue";
 import Template from "@/components/Template.vue";
-import useFetch from "@/composables/Fetch";
+import { useSearch } from "@/composables/Templates";
 import ITemplate from "@/models/ITemplate";
 
 export default defineComponent({
@@ -34,10 +34,9 @@ export default defineComponent({
     let templates = ref<ITemplate[] | null>(null);
 
     onMounted(async () => {
-      const url = "http://localhost:4999/Templates/online";
-      const { data, error } = await useFetch<Array<ITemplate>>(url);
+      const { data, error } = await useSearch();
       if (data.value) {
-        templates.value = data.value;
+        data.value = templates.value;
       } else if (error.value) {
         console.error(error.value);
       }
