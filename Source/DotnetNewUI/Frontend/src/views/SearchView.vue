@@ -36,7 +36,7 @@ export default defineComponent({
     onMounted(async () => {
       const { data, error } = await useSearch();
       if (data.value) {
-        data.value = templates.value;
+        templates.value = data.value;
       } else if (error.value) {
         console.error(error.value);
       }
