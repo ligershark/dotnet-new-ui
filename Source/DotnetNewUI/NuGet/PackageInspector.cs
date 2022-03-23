@@ -14,12 +14,7 @@ public static class PackageInspector
 
     public static IReadOnlyList<CompositeTemplateManifest> GetTemplateManifestsFromPackage(string packagePath, bool isBuiltIn)
     {
-        var packageFileName = Path.GetFileName(packagePath);
-
-        var packageNameRegex = new Regex("^(?<packagename>.*)\\.(?<version>\\d*\\.\\d*\\.\\d*-?.*)\\.nupkg$");
-        var match = packageNameRegex.Match(packageFileName);
-        var packageName = match.Groups["packagename"].Value;
-        var packageVersion = match.Groups["version"].Value;
+        var (packageName, packageVersion) = GetPackageNameAndVersion(packagePath);
 
         using var file = File.OpenRead(packagePath);
         var package = new ZipArchive(file);
@@ -44,6 +39,18 @@ public static class PackageInspector
             .ToList();
 
         return templateManifests;
+    }
+
+    public static (string PackageName, string Version) GetPackageNameAndVersion(string filePath)
+    {
+        var fileName = Path.GetFileName(filePath);
+
+        var regex = new Regex("^(?<packagename>.*)\\.(?<version>\\d*\\.\\d*\\.\\d*-?.*)\\.nupkg$");
+        var match = regex.Match(fileName);
+        var packageName = match.Groups["packagename"].Value;
+        var version = match.Groups["version"].Value;
+
+        return (packageName, version);
     }
 
     private static TemplateManifest GetTemplateManifest(ZipArchiveEntry templateFile)

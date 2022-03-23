@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 public class NuGetClient : INuGetClient
 {
-    private const int PageSize = 100;
+    private const int PageSize = 500;
     private readonly HttpClient httpClient;
 
     public NuGetClient(HttpClient httpClient)

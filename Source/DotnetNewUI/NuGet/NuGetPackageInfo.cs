@@ -12,4 +12,6 @@ public record class NuGetPackageInfo(
     string Summary,
     string[] Tags,
     string ProjectUrl,
-    string? IconUrl);
+    string? IconUrl,
+    bool? IsInstalled,
+    string? InstalledVersion);
