@@ -1,3 +1,5 @@
+#addin nuget:?package=Cake.Npm&version=2.0.0
+
 var target = Argument("Target", "Default");
 var configuration =
     HasArgument("Configuration") ? Argument<string>("Configuration") :
@@ -21,11 +23,7 @@ Task("RestoreNPM")
     .Description("Restores NPM packages.")
     .Does(() =>
     {
-        StartProcess(
-            "powershell",
-            new ProcessSettings()
-                .WithArguments(x => x.Append("npm").Append("ci"))
-                .UseWorkingDirectory(frontendDirectory));
+        NpmCi(x => x.FromPath(frontendDirectory));
     });
 
 Task("BuildNPM")
@@ -33,11 +31,7 @@ Task("BuildNPM")
     .IsDependentOn("RestoreNPM")
     .Does(() =>
     {
-        StartProcess(
-            "powershell",
-            new ProcessSettings()
-                .WithArguments(x => x.Append("npm").Append("run").Append("build"))
-                .UseWorkingDirectory(frontendDirectory));
+        NpmRunScript("build", x => x.FromPath(frontendDirectory));
     });
 
 Task("Restore")
