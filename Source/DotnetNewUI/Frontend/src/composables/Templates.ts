@@ -1,5 +1,6 @@
 import useFetch, { IResult } from "@/composables/Fetch";
 import IPackage from "@/models/IPackage";
+import ITemplate from "@/models/ITemplate";
 
 let origin = `${document.location.origin}`;
 if (process.env.NODE_ENV === "development") {
@@ -14,6 +15,11 @@ export async function useSearch(): Promise<IResult<IPackage[]>> {
 export async function useInstalled(): Promise<IResult<IPackage[]>> {
   const url = `${origin}/Templates/installed`;
   return await useFetch<Array<IPackage>>(url);
+}
+
+export async function useTemplates(): Promise<IResult<ITemplate[]>> {
+  const url = `${origin}/Templates/installed`;
+  return await useFetch<Array<ITemplate>>(url);
 }
 
 export async function useInstall(id: string) {

@@ -3,9 +3,10 @@
     <h1 class="search__title">Search</h1>
     <input
       type="search"
-      placeholder="Template package search e.g. Boxed.Templates" />
+      placeholder="Template package search e.g. Boxed.Templates"
+      v-model="query" />
     <div class="search__packages">
-      <ui-card v-for="pack in packages" v-bind:key="pack.id">
+      <ui-card v-for="pack in filteredPackages" v-bind:key="pack.id">
         <ui-package :pack="pack" />
       </ui-card>
     </div>
@@ -13,7 +14,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import { useMeta } from "vue-meta";
 import Card from "@/components/Card.vue";
 import Package from "@/components/Package.vue";
@@ -32,6 +33,16 @@ export default defineComponent({
     });
 
     let packages = ref<IPackage[] | null>(null);
+    const query = ref("");
+
+    var filteredPackages = computed(() => {
+      if (query.value === "") {
+        return packages.value?.slice(0, 100);
+      }
+      return packages.value
+        ?.filter((x) => x.title.includes(query.value))
+        .slice(0, 100);
+    });
 
     onMounted(async () => {
       const { data, error } = await useSearch();
@@ -43,7 +54,8 @@ export default defineComponent({
     });
 
     return {
-      packages,
+      filteredPackages,
+      query,
     };
   },
 });
@@ -60,6 +72,5 @@ export default defineComponent({
 .search__packages {
   display: grid;
   gap: 20px;
-  justify-content: center;
 }
 </style>
