@@ -33,19 +33,11 @@ jobs:
         with:
           lfs: true
           fetch-depth: 0
-
       - uses: actions/setup-node@v3.0.0
         with:
           node-version: "16"
           cache: npm
           cache-dependency-path: "Source/DotnetNewUI/Frontend/package-lock.json"
-      - name: "NPM Install"
-        run: npm ci
-        working-directory: "Source/DotnetNewUI/Frontend"
-      - name: "NPM Build"
-        run: npm run build
-        working-directory: "Source/DotnetNewUI/Frontend"
-
       - name: "Install .NET Core SDK"
         uses: actions/setup-dotnet@v2.0.0
       - name: "Dotnet Tool Restore"
