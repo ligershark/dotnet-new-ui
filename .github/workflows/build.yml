@@ -37,6 +37,7 @@ jobs:
         with:
           node-version: "16"
           cache: npm
+          cache-dependency-path: "Source/DotnetNewUI/Frontend/package-lock.json"
       - name: "Install .NET Core SDK"
         uses: actions/setup-dotnet@v2.0.0
       - name: "Dotnet Tool Restore"
