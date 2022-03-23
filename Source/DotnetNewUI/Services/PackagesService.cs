@@ -39,9 +39,11 @@ public class PackagesService : IPackagesService
             .ToList();
     }
 
-    public Task InstallTemplatePackageAsync(string packageId) => throw new NotImplementedException();
+    public async Task InstallTemplatePackageAsync(string packageId)
+        => await SimpleExec.Command.RunAsync("dotnet", $"new --install {packageId}").ConfigureAwait(false);
 
-    public Task UninstallTemplatePackageAsync(string packageId) => throw new NotImplementedException();
+    public async Task UninstallTemplatePackageAsync(string packageId)
+        => await SimpleExec.Command.RunAsync("dotnet", $"new --uninstall {packageId}").ConfigureAwait(false);
 
     public Task UpdateTemplatePackageAsync(string packageId) => throw new NotImplementedException();
 }
