@@ -5,6 +5,7 @@ export default interface ITemplate {
   readonly isBuiltIn: boolean;
   readonly templateManifest: ITemplateManifest;
   readonly ideHostManifest: IIdeHostManifest;
+  readonly languages: string[];
 }
 
 export interface ITemplateManifest {

@@ -20,13 +20,20 @@
         <span>{{ templateManifest?.author }}</span>
       </p>
       <p
+        class="template__language"
+        :class="`template__language--${getLanguageClass(language)}`"
+        v-for="language in languages"
+        v-bind:key="language">
+        {{ language }}
+      </p>
+      <p
         v-if="templateManifest?.tags?.type"
         class="template__type"
         :class="`template__type--${templateManifest?.tags?.type}`">
         {{ templateManifest?.tags?.type }} template
       </p>
     </div>
-    <ui-tags class="template__tags" :tags="tags" />
+    <ui-tags class="template__tags" :tags="templateManifest.classifications" />
     <p class="template__description">{{ templateManifest.description }}</p>
     <ui-anchor
       class="template__create"
@@ -58,20 +65,15 @@ export default defineComponent({
     const { template } = toRefs(props);
 
     const iconUrl = computed(() => template.value.base64Icon);
-    const tags = computed(() => {
-      const language = template.value?.templateManifest?.tags?.language;
-      if (language) {
-        return [language].concat(
-          template.value.templateManifest.classifications
-        );
-      }
-      return template.value.templateManifest.classifications;
-    });
+
+    function getLanguageClass(language: string) {
+      return language.replace("#", "");
+    }
 
     return {
       ...template.value,
+      getLanguageClass,
       iconUrl,
-      tags,
     };
   },
 });
@@ -116,7 +118,9 @@ export default defineComponent({
 .template__title-heading-link:not([href]):hover {
   text-decoration: none;
 }
+.template__language,
 .template__type {
+  background: coral;
   border-radius: 10px;
   padding: 2px 10px;
 }
@@ -128,6 +132,15 @@ export default defineComponent({
 }
 .template__type--solution {
   background: red;
+}
+.template__language--C {
+  background: purple;
+}
+.template__language--F {
+  background: teal;
+}
+.template__language--VB {
+  background: orange;
 }
 
 .template__tags {
