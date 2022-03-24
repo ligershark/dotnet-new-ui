@@ -2,8 +2,17 @@
   <div class="create-item">
     <h1>Create</h1>
     <form class="create-item__content" @submit.prevent="onSubmit">
+      <fieldset class="create-item__fieldset">
+        <label class="create-item__label" for="location"
+          >Directory <span class="create-item__label-required">*</span></label
+        >
+        <input id="name" type="text" v-model="location" />
+      </fieldset>
+
       <fieldset v-if="languages.length > 1" class="create-item__fieldset">
-        <label class="create-item__label" for="language">Language</label>
+        <label class="create-item__label" for="language"
+          >Language <span class="create-item__label-required">*</span></label
+        >
         <select class="create-item__label" v-model="language" id="language">
           <option
             v-for="language in languages"
@@ -17,11 +26,10 @@
       <fieldset class="create-item__fieldset">
         <label class="create-item__label" for="name">Name</label>
         <input id="name" type="text" v-model="name" />
-      </fieldset>
-
-      <fieldset class="create-item__fieldset">
-        <label class="create-item__label" for="location">Directory</label>
-        <input id="name" type="text" v-model="location" />
+        <p>
+          The name for the output being created. If no name is specified, the
+          name of the output directory is used.
+        </p>
       </fieldset>
 
       <ui-button type="submit">🚀 Create</ui-button>
@@ -106,5 +114,8 @@ export default defineComponent({
   display: flex;
   gap: 10px;
   flex-direction: column;
+}
+.create-item__label-required {
+  color: red;
 }
 </style>
