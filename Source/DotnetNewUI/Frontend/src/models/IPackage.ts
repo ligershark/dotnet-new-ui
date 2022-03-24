@@ -13,4 +13,5 @@ export default interface IPackage {
   readonly version: string;
   readonly isInstalled: boolean;
   readonly installedVersion: string;
+  readonly isBuiltIn: boolean;
 }

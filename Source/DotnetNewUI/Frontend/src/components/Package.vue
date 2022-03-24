@@ -1,6 +1,5 @@
 <template>
   <article class="package">
-    {{ version }}
     <img
       class="package__icon"
       alt=""
@@ -34,12 +33,15 @@
     <ui-tags v-if="tags.length > 0" class="package__tags" :tags="tags" />
     <p class="package__description">{{ description }}</p>
     <ui-button
-      v-if="isInstalled"
+      v-if="!isBuiltIn && isInstalled"
       class="package__uninstall"
       @click="onUninstallClick"
       >☠️ Uninstall</ui-button
     >
-    <ui-button v-else class="package__install" @click="onInstallClick"
+    <ui-button
+      v-if="!isBuiltIn && !isInstalled"
+      class="package__install"
+      @click="onInstallClick"
       >💽 Install</ui-button
     >
   </article>
