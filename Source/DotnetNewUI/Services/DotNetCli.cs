@@ -41,7 +41,8 @@ public class DotNetCli
     {
         try
         {
-            var (output, error) = await Command.ReadAsync(name, arguments).ConfigureAwait(false);
+            using var cts = new CancellationTokenSource(30_000);
+            var (output, error) = await Command.ReadAsync(name, arguments, cancellationToken: cts.Token).ConfigureAwait(false);
             this.logger.ExecutedSuccessfully(name, arguments, output, error);
             return (output, error);
         }
