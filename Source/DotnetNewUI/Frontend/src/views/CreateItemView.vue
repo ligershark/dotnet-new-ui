@@ -46,9 +46,9 @@ export default defineComponent({
     onMounted(async () => {
       const { data, error } = await useTemplates();
       if (data.value) {
-        template.value = data.value.find(
-          (x) => x.templateManifest.identity === templateId
-        );
+        template.value =
+          data.value.find((x) => x.templateManifest.identity === templateId) ||
+          null;
       } else if (error.value) {
         console.error(error.value);
       }
