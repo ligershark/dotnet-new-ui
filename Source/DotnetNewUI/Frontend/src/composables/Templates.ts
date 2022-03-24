@@ -26,3 +26,19 @@ export async function useTemplates(): Promise<IResult<ITemplate[]>> {
   const url = `${origin}/Templates`;
   return await useFetch<Array<ITemplate>>(url);
 }
+
+export async function useCreate(
+  shortName: string,
+  outputPath: string,
+  name: string,
+  language: string
+): Promise<IResult<string>> {
+  let url = `${origin}/Templates/${shortName}?outputPath=${outputPath}`;
+  if (name) {
+    url += `&name=${name}`;
+  }
+  if (language) {
+    url += `&language=${language}`;
+  }
+  return await useFetch<string>(url, "POST");
+}

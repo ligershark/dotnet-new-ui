@@ -39,4 +39,8 @@ export default defineComponent({
   color: hsl(0, 0%, 100%);
   transform: scale(1.1);
 }
+.button[disabled] {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
 </style>

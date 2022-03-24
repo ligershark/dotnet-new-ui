@@ -24,7 +24,7 @@
         </select>
       </fieldset>
 
-      <fieldset class="create-item__fieldset">
+      <fieldset v-if="!isItemTemplate" class="create-item__fieldset">
         <label class="create-item__label" for="name">Name</label>
         <input id="name" type="text" v-model="name" />
         <p class="create-item__note">
@@ -33,16 +33,16 @@
         </p>
       </fieldset>
 
-      <ui-button type="submit">🚀 Create</ui-button>
+      <ui-button :disabled="!isValid" type="submit">🚀 Create</ui-button>
     </form>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import Button from "@/components/Button.vue";
-import { useTemplates } from "@/composables/Templates";
+import { useCreate, useTemplates } from "@/composables/Templates";
 import ITemplate from "@/models/ITemplate";
 
 export default defineComponent({
@@ -62,6 +62,16 @@ export default defineComponent({
     const languages = ref<Array<string>>([]);
     const language = ref("");
 
+    const isValid = computed(
+      () =>
+        location.value !== "" &&
+        (languages.value.length <= 1 || language.value !== "") &&
+        (isItemTemplate.value || name.value !== "")
+    );
+    const isItemTemplate = computed(
+      () => template.value?.templateManifest?.tags?.type === "item"
+    );
+
     onMounted(async () => {
       const { data, error } = await useTemplates();
       if (data.value) {
@@ -79,15 +89,29 @@ export default defineComponent({
       location.value = (event.target as any)?.files[0];
     }
 
-    function onSubmit() {
-      alert("test");
+    async function onSubmit() {
+      if (template.value) {
+        const { error } = await useCreate(
+          template.value.templateManifest.shortName[0],
+          location.value,
+          name.value,
+          language.value
+        );
+        if (error.value) {
+          console.error(error.value);
+        } else {
+          alert(`Created!`);
+        }
+      }
     }
 
     return {
       template,
+      isItemTemplate,
       name,
       location,
       languages,
+      isValid,
       language,
       onChangeLocation,
       onSubmit,
