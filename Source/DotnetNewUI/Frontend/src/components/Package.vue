@@ -29,7 +29,6 @@
       <p class="package__downloads">
         ⬇️ {{ totalDownloads.toLocaleString("en-US") }} downloads
       </p>
-      <p class="package__last-updated">⏳ last updated</p>
       <p class="package__version">🚀 Latest version: {{ version }}</p>
     </div>
     <ui-tags v-if="tags.length > 0" class="package__tags" :tags="tags" />

@@ -28,17 +28,24 @@
     </div>
     <ui-tags class="template__tags" :tags="tags" />
     <p class="template__description">{{ templateManifest.description }}</p>
+    <ui-anchor
+      class="template__create"
+      :to="{ name: 'create-item', params: { id: templateManifest.identity } }"
+      >🚀 Create</ui-anchor
+    >
   </div>
 </template>
 
 <script lang="ts">
 import { computed, defineComponent, toRefs } from "vue";
+import Anchor from "@/components/Anchor.vue";
 import Tags from "@/components/Tags.vue";
 import ITemplate from "@/models/ITemplate";
 
 export default defineComponent({
   name: "ui-template",
   components: {
+    "ui-anchor": Anchor,
     "ui-tags": Tags,
   },
   props: {
@@ -76,11 +83,11 @@ export default defineComponent({
   column-gap: 10px;
   row-gap: 4px;
   grid-template-areas:
-    "icon title"
-    "icon tags"
-    "icon description"
-    "icon .";
-  grid-template-columns: auto 1fr;
+    "icon title create"
+    "icon tags create"
+    "icon description create"
+    "icon . create";
+  grid-template-columns: auto 1fr auto;
   grid-template-rows: auto auto auto 1fr;
 }
 
@@ -133,5 +140,11 @@ export default defineComponent({
   overflow-wrap: break-word;
   word-wrap: break-word;
   word-break: break-word;
+}
+
+.template__create {
+  grid-area: create;
+
+  align-self: start;
 }
 </style>

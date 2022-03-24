@@ -1,7 +1,5 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from "vue-router";
 import SearchView from "../views/SearchView.vue";
-import InstalledView from "../views/InstalledView.vue";
-import CreateView from "../views/CreateView.vue";
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -12,12 +10,17 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: "/installed",
     name: "installed",
-    component: InstalledView,
+    component: () => import("../views/InstalledView.vue"),
   },
   {
     path: "/create",
     name: "create",
-    component: CreateView,
+    component: () => import("../views/CreateView.vue"),
+  },
+  {
+    path: "/create/:id",
+    name: "create-item",
+    component: () => import("../views/CreateItemView.vue"),
   },
 ];
 

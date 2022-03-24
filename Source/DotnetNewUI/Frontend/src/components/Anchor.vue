@@ -1,5 +1,5 @@
 <template>
-  <button class="button" :type="type"><slot></slot></button>
+  <router-link class="anchor" :to="to"><slot></slot></router-link>
 </template>
 
 <script lang="ts">
@@ -8,15 +8,15 @@ import { defineComponent } from "vue";
 export default defineComponent({
   name: "ui-button",
   props: {
-    type: {
-      type: String as () => "submit" | "reset" | "button",
+    to: {
+      type: Object,
     },
   },
 });
 </script>
 
 <style type="scss">
-.button {
+.anchor {
   display: inline-block;
 
   background: hsl(0, 0%, 100%);
@@ -31,10 +31,10 @@ export default defineComponent({
   text-decoration: none;
   transition: transform 0.15s ease-in-out;
 }
-.button:hover {
+.anchor:hover {
   transform: scale(1.1);
 }
-.button--active {
+.anchor--active {
   background: hsla(257, 85%, 15%, 0.25);
   color: hsl(0, 0%, 100%);
   transform: scale(1.1);
