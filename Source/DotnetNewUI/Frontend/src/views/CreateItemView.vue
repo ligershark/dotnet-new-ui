@@ -4,20 +4,14 @@
     <form class="create-item__content" @submit.prevent="onSubmit">
       <fieldset class="create-item__fieldset">
         <label class="create-item__label" for="name">Name</label>
-        <input id="name" type="text" />
+        <input id="name" type="text" v-model="name" />
       </fieldset>
 
       <fieldset class="create-item__fieldset">
         <label class="create-item__label" for="location">Directory</label>
-        <div class="create-item__location-wrapper">
-          <input
-            id="location"
-            type="file"
-            webkitdirectory
-            mozdirectory
-            msdirectory
-            odirectory
-            directory />
+        <div class="create-item__location-inputs">
+          <input id="name" type="text" v-model="location" />
+          <ui-directory-input id="location" v-model="location" />
         </div>
       </fieldset>
 
@@ -30,6 +24,7 @@
 import { defineComponent, onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import Button from "@/components/Button.vue";
+import DirectoryInput from "@/components/DirectoryInput.vue";
 import { useTemplates } from "@/composables/Templates";
 import ITemplate from "@/models/ITemplate";
 
@@ -37,11 +32,15 @@ export default defineComponent({
   name: "ui-create-item",
   components: {
     "ui-button": Button,
+    "ui-directory-input": DirectoryInput,
   },
   setup() {
     const route = useRoute();
     const templateId = route.params.id;
+
     const template = ref<ITemplate | null>(null);
+    const name = ref("");
+    const location = ref("");
 
     onMounted(async () => {
       const { data, error } = await useTemplates();
@@ -54,12 +53,20 @@ export default defineComponent({
       }
     });
 
+    function onChangeLocation(event: Event) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      location.value = (event.target as any)?.files[0];
+    }
+
     function onSubmit() {
       alert("test");
     }
 
     return {
       template,
+      name,
+      location,
+      onChangeLocation,
       onSubmit,
     };
   },
@@ -88,34 +95,8 @@ export default defineComponent({
   gap: 10px;
   flex-direction: column;
 }
-
-.create-item__location-wrapper {
-  input {
-    cursor: pointer;
-    opacity: 0;
-  }
-  position: relative;
-}
-.create-item__location-wrapper::after {
-  content: "Browse";
-
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1;
-
-  background: hsl(0, 0%, 100%);
-  border-radius: 4px;
-  color: hsl(283, 69%, 41%);
-  font-size: 30px;
-  line-height: 1.5;
-  min-width: 160px;
-  padding: 0.5rem 1rem;
-  pointer-events: none;
-  text-align: center;
-  text-decoration: none;
-  transition: transform 0.15s ease-in-out;
+.create-item__location-inputs {
+  display: grid;
+  grid-template-columns: 1fr auto;
 }
 </style>
