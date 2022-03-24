@@ -62,14 +62,13 @@ export default defineComponent({
     const languages = ref<Array<string>>([]);
     const language = ref("");
 
+    const isItemTemplate = computed(
+      () => template.value?.templateManifest?.tags?.type === "item"
+    );
     const isValid = computed(
       () =>
         location.value !== "" &&
-        (languages.value.length <= 1 || language.value !== "") &&
-        (isItemTemplate.value || name.value !== "")
-    );
-    const isItemTemplate = computed(
-      () => template.value?.templateManifest?.tags?.type === "item"
+        (languages.value.length <= 1 || language.value !== "")
     );
 
     onMounted(async () => {
@@ -100,7 +99,7 @@ export default defineComponent({
         if (error.value) {
           console.error(error.value);
         } else {
-          alert(`Created!`);
+          alert("Created!");
         }
       }
     }

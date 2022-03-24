@@ -32,13 +32,16 @@ export async function useCreate(
   outputPath: string,
   name: string,
   language: string
-): Promise<IResult<string>> {
-  let url = `${origin}/Templates/${shortName}?outputPath=${outputPath}`;
+) {
+  const url = new URL(`${origin}/Templates/${shortName}`);
+  url.searchParams.append("outputPath", outputPath);
   if (name) {
-    url += `&name=${name}`;
+    url.searchParams.append("name", name);
   }
   if (language) {
-    url += `&language=${language}`;
+    url.searchParams.append("language", language);
   }
-  return await useFetch<string>(url, "POST");
+
+  console.log(language, url.toString());
+  return await useEmptyFetch(url.toString(), "POST");
 }
