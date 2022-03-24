@@ -101,6 +101,7 @@ Task("Install")
     .Description("Install the dotnet tool globally.")
     .Does(() =>
     {
+        StartProcess("powershell", new ProcessSettings().WithArguments(x => x.Append("./ClearCache.ps1")));
         StartProcess(
             "dotnet",
             new ProcessSettings()
