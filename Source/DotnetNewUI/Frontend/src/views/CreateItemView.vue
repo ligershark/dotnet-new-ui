@@ -26,7 +26,7 @@
       <fieldset class="create-item__fieldset">
         <label class="create-item__label" for="name">Name</label>
         <input id="name" type="text" v-model="name" />
-        <p>
+        <p class="create-item__note">
           The name for the output being created. If no name is specified, the
           name of the output directory is used.
         </p>
@@ -117,5 +117,8 @@ export default defineComponent({
 }
 .create-item__label-required {
   color: red;
+}
+.create-item__note {
+  max-width: none;
 }
 </style>
