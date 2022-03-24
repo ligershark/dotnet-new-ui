@@ -4,6 +4,7 @@ using System.Text.Json.Serialization;
 
 public record class TemplateManifest(
     string Identity,
+    string GroupIdentity,
     string Name,
     string Author,
     string[] Classifications,

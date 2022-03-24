@@ -22,7 +22,11 @@ internal static class BuiltInTemplatePackageProvider
 
     private static async Task<IEnumerable<string>> GetTemplateFoldersAsync()
     {
-        var (dotnetRootPath, sdkVersion) = await DotNetCli.ListSdksAsync().ConfigureAwait(false);
+        var sdks = await DotNetCli.ListSdksAsync().ConfigureAwait(false);
+        var currentSdkVersion = await DotNetCli.GetSdkVersionAsync().ConfigureAwait(false);
+
+        var (sdkVersion, sdkInstallDir) = sdks.Single(x => x.SdkVersion == currentSdkVersion);
+        var dotnetRootPath = Path.GetDirectoryName(sdkInstallDir)!;
 
         var templateFolders = new List<string>();
 

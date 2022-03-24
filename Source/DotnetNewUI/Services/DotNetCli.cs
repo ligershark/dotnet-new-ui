@@ -5,10 +5,16 @@ using global::NuGet.Versioning;
 
 public static class DotNetCli
 {
-    public static async Task<(string DotnetRootPath, SemanticVersion SdkVersion)> ListSdksAsync()
+    public static async Task<IReadOnlyList<(SemanticVersion SdkVersion, string ParentDirectory)>> ListSdksAsync()
     {
         var (output, _) = await SimpleExec.Command.ReadAsync("dotnet", "--list-sdks").ConfigureAwait(false);
-        return DotNetCliHelper.ParseDotNetListSdksOutput(output);
+        return DotNetCliHelper.ParseDotNetListSdksOutput(output.Trim());
+    }
+
+    public static async Task<SemanticVersion> GetSdkVersionAsync()
+    {
+        var (output, _) = await SimpleExec.Command.ReadAsync("dotnet", "--version").ConfigureAwait(false);
+        return SemanticVersion.Parse(output.Trim());
     }
 
     public static async Task InstallTemplatePackageAsync(string packageId)
@@ -23,17 +29,23 @@ public static class DotNetCli
 
 public static class DotNetCliHelper
 {
-    public static (string DotnetRootPath, SemanticVersion SdkVersion) ParseDotNetListSdksOutput(string listSdksOutput)
+    public static IReadOnlyList<(SemanticVersion SdkVersion, string DotnetRootPath)> ParseDotNetListSdksOutput(string listSdksOutput)
     {
-        var outputLine = listSdksOutput.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries).Last(); // Take latest SDK
-        var regexMatch = Regex.Match(outputLine, "^(?<version>.*) \\[(?<path>.*)\\]$");
-        var version = regexMatch.Groups["version"].Value;
-        var path = regexMatch.Groups["path"].Value;
+        var output = listSdksOutput
+            .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
+            .Select(outputLine =>
+            {
+                var regexMatch = Regex.Match(outputLine, "^(?<version>.*) \\[(?<path>.*)\\]$");
+                var version = regexMatch.Groups["version"].Value;
+                var path = regexMatch.Groups["path"].Value;
 
-        var dotnetRootPath = Path.GetDirectoryName(path); // Get to parent directory
-        var sdkVersion = SemanticVersion.Parse(version);
+                var sdkVersion = SemanticVersion.Parse(version);
 
-        return (dotnetRootPath!, sdkVersion!);
+                return (sdkVersion!, path!);
+            })
+            .ToList();
+
+        return output;
     }
 
     public static string FormatAsCliArguments(IReadOnlyDictionary<string, string?> arguments)

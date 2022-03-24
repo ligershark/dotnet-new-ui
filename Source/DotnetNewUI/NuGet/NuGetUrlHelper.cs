@@ -27,6 +27,9 @@ internal static class NuGetUrlHelper
         return pageUrls;
     }
 
+    public static string GetNuGetUrl(string packageId)
+        => $"https://www.nuget.org/packages/{packageId}";
+
     public static string GetAvatarIconUrl(string profile)
         => $"https://www.nuget.org/profiles/{profile}/avatar?imageSize=64";
 }
