@@ -35,6 +35,7 @@ public class Program
 
         var commandLineBuilder = new CommandLineBuilder(rootCommand)
             .UseHost(hostBuilder => hostBuilder.ConfigureHost())
+            .CancelOnProcessTermination()
             .UseDefaults();
 
         var parser = commandLineBuilder.Build();
@@ -78,7 +79,7 @@ public class Program
                 urlOpenerService.Open(url);
             }
 
-            await WaitForCancellationAsync(cancellationToken).ConfigureAwait(false);
+            await host.WaitForShutdownAsync(cancellationToken).ConfigureAwait(false);
         }
         catch (TaskCanceledException)
         {
@@ -91,20 +92,5 @@ public class Program
             console.WriteLine();
             console.WriteException(exception);
         }
-    }
-
-    private static Task WaitForCancellationAsync(CancellationToken cancellationToken)
-    {
-        var tcs = new TaskCompletionSource();
-        if (cancellationToken.IsCancellationRequested)
-        {
-            tcs.SetResult();
-        }
-        else
-        {
-            var registration = cancellationToken.Register(() => tcs.SetResult());
-        }
-
-        return tcs.Task;
     }
 }
