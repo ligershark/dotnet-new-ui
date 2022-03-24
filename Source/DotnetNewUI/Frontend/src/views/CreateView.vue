@@ -75,12 +75,6 @@ export default defineComponent({
 
     var filteredTemplates = computed(() => {
       return templates.value?.filter((x) => {
-        console.log(
-          x.templateManifest.name,
-          query.value,
-          type.value,
-          language.value
-        );
         return (
           (type.value === "" ||
             x.templateManifest?.tags?.type === type.value) &&

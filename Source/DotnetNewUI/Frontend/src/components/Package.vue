@@ -85,6 +85,7 @@ export default defineComponent({
     async function onInstallClick() {
       const { data, error } = await usePackageInstall(pack.value.id);
       if (data.value) {
+        pack.value.isInstalled = true;
         alert(`${pack.value.title} installed!`);
       } else if (error.value) {
         console.error(error.value);
@@ -94,6 +95,7 @@ export default defineComponent({
     async function onUninstallClick() {
       const { data, error } = await usePackageUninstall(pack.value.id);
       if (data.value) {
+        pack.value.isInstalled = false;
         alert(`${pack.value.title} uninstalled!`);
       } else if (error.value) {
         console.error(error.value);

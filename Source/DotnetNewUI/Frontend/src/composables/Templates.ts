@@ -13,12 +13,12 @@ export async function usePackages(): Promise<IResult<IPackage[]>> {
 }
 
 export async function usePackageInstall(id: string) {
-  const url = `${origin}/Templates/installed/${id}`;
+  const url = `${origin}/Packages/${id}`;
   return await useFetch<string>(url, "POST");
 }
 
 export async function usePackageUninstall(id: string) {
-  const url = `${origin}/Templates/installed/${id}`;
+  const url = `${origin}/Packages/${id}`;
   return await useFetch<string>(url, "DELETE");
 }
 
