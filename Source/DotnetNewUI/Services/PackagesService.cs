@@ -5,10 +5,14 @@ using DotnetNewUI.NuGet;
 public class PackagesService : IPackagesService
 {
     private readonly INuGetClient nuGetClient;
-
+    private readonly DotNetCli dotNetCli;
     private Task<IReadOnlyList<NuGetPackageInfo>>? cachedOnlinePackages;
 
-    public PackagesService(INuGetClient nuGetClient) => this.nuGetClient = nuGetClient;
+    public PackagesService(INuGetClient nuGetClient, DotNetCli dotNetCli)
+    {
+        this.nuGetClient = nuGetClient;
+        this.dotNetCli = dotNetCli;
+    }
 
     public async Task<IReadOnlyList<NuGetPackageInfo>> GetTemplatePackagesAsync()
     {
@@ -18,17 +22,17 @@ public class PackagesService : IPackagesService
         }
 
         var onlineTemplatePackages = await this.cachedOnlinePackages.ConfigureAwait(false);
-        var builtInTemplatePackages = await BuiltInTemplatePackageProvider.GetAllTemplatePackagesAsync().ConfigureAwait(false);
+        var builtInTemplatePackages = await BuiltInTemplatePackageProvider.GetAllTemplatePackagesAsync(this.dotNetCli).ConfigureAwait(false);
         var installedTemplatePackages = InstalledTemplatePackageProvider.GetAllTemplatePackages();
 
         return PackageServiceHelper.MergeResults(onlineTemplatePackages, builtInTemplatePackages, installedTemplatePackages);
     }
 
     public async Task InstallTemplatePackageAsync(string packageId)
-        => await DotNetCli.InstallTemplatePackageAsync(packageId).ConfigureAwait(false);
+        => await this.dotNetCli.InstallTemplatePackageAsync(packageId).ConfigureAwait(false);
 
     public async Task UninstallTemplatePackageAsync(string packageId)
-        => await DotNetCli.UninstallTemplatePackageAsync(packageId).ConfigureAwait(false);
+        => await this.dotNetCli.UninstallTemplatePackageAsync(packageId).ConfigureAwait(false);
 
     public Task UpdateTemplatePackageAsync(string packageId)
         => throw new NotImplementedException();

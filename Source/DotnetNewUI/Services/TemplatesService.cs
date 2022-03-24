@@ -4,9 +4,13 @@ using DotnetNewUI.NuGet;
 
 public class TemplatesService : ITemplatesService
 {
+    private readonly DotNetCli dotNetCli;
+
+    public TemplatesService(DotNetCli dotNetCli) => this.dotNetCli = dotNetCli;
+
     public async Task<IReadOnlyList<CompositeTemplateManifest>> GetInstalledTemplatesAsync()
     {
-        var builtInTemplatePackages = await BuiltInTemplatePackageProvider.GetAllTemplatePackagesAsync().ConfigureAwait(false);
+        var builtInTemplatePackages = await BuiltInTemplatePackageProvider.GetAllTemplatePackagesAsync(this.dotNetCli).ConfigureAwait(false);
         var installedTemplatePackages = InstalledTemplatePackageProvider.GetAllTemplatePackages();
 
         var builtInTemplates = builtInTemplatePackages
@@ -27,7 +31,7 @@ public class TemplatesService : ITemplatesService
             { "language", language },
         };
 
-        await DotNetCli.CreateNewFromTemplateAsync(templateShortName, arguments).ConfigureAwait(false);
+        await this.dotNetCli.CreateNewFromTemplateAsync(templateShortName, arguments).ConfigureAwait(false);
     }
 
     internal static class TemplatesServiceHelper

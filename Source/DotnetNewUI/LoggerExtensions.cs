@@ -22,4 +22,10 @@ internal static partial class LoggerExtensions
         Level = LogLevel.Information,
         Message = "Removed endpoint {Endpoint} to {Endpoints}.")]
     public static partial void RemovedEndpoint(this ILogger logger, string endpoint, string endpoints);
+
+    [LoggerMessage(
+        EventId = 5003,
+        Level = LogLevel.Information,
+        Message = "Executed {Name} {Arguments}.")]
+    public static partial void Executed(this ILogger logger, string name, string arguments);
 }

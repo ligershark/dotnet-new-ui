@@ -55,6 +55,7 @@ public static class HostBuilderExtensions
             .AddSingleton<INuGetClient, NuGetClient>()
             .AddSingleton<IPackagesService, PackagesService>()
             .AddSingleton<ITemplatesService, TemplatesService>()
+            .AddSingleton<DotNetCli>()
             .AddHttpClient();
 
     private static void ConfigureWebHostBuilder(IWebHostBuilder webHostBuilder) =>

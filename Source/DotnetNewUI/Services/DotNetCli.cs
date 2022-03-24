@@ -1,30 +1,55 @@
 namespace DotnetNewUI.Services;
-
 using System.Text.RegularExpressions;
 using global::NuGet.Versioning;
+using SimpleExec;
 
-public static class DotNetCli
+public class DotNetCli
 {
-    public static async Task<IReadOnlyList<(SemanticVersion SdkVersion, string ParentDirectory)>> ListSdksAsync()
+    private readonly ILogger<DotNetCli> logger;
+
+    public DotNetCli(ILogger<DotNetCli> logger) => this.logger = logger;
+
+    public async Task<IReadOnlyList<(SemanticVersion SdkVersion, string ParentDirectory)>> ListSdksAsync()
     {
-        var (output, _) = await SimpleExec.Command.ReadAsync("dotnet", "--list-sdks").ConfigureAwait(false);
+        var name = "dotnet";
+        var arguments = "--list-sdks";
+        this.logger.Executed(name, arguments);
+        var (output, _) = await Command.ReadAsync(name, arguments).ConfigureAwait(false);
         return DotNetCliHelper.ParseDotNetListSdksOutput(output.Trim());
     }
 
-    public static async Task<SemanticVersion> GetSdkVersionAsync()
+    public async Task<SemanticVersion> GetSdkVersionAsync()
     {
-        var (output, _) = await SimpleExec.Command.ReadAsync("dotnet", "--version").ConfigureAwait(false);
+        var name = "dotnet";
+        var arguments = "--version";
+        this.logger.Executed(name, arguments);
+        var (output, _) = await Command.ReadAsync(name, arguments).ConfigureAwait(false);
         return SemanticVersion.Parse(output.Trim());
     }
 
-    public static async Task InstallTemplatePackageAsync(string packageId)
-        => await SimpleExec.Command.RunAsync("dotnet", $"new --install {packageId}").ConfigureAwait(false);
+    public async Task InstallTemplatePackageAsync(string packageId)
+    {
+        var name = "dotnet";
+        var arguments = $"new --install {packageId}";
+        this.logger.Executed(name, arguments);
+        await Command.RunAsync(name, arguments).ConfigureAwait(false);
+    }
 
-    public static async Task UninstallTemplatePackageAsync(string packageId)
-        => await SimpleExec.Command.RunAsync("dotnet", $"new --uninstall {packageId}").ConfigureAwait(false);
+    public async Task UninstallTemplatePackageAsync(string packageId)
+    {
+        var name = "dotnet";
+        var arguments = $"new --uninstall {packageId}";
+        this.logger.Executed(name, arguments);
+        await Command.RunAsync(name, arguments).ConfigureAwait(false);
+    }
 
-    public static async Task CreateNewFromTemplateAsync(string templateShortName, IReadOnlyDictionary<string, string?> arguments)
-        => await SimpleExec.Command.RunAsync("dotnet", $"new {templateShortName} {DotNetCliHelper.FormatAsCliArguments(arguments)}").ConfigureAwait(false);
+    public async Task CreateNewFromTemplateAsync(string templateShortName, IReadOnlyDictionary<string, string?> arguments)
+    {
+        var name = "dotnet";
+        var args = $"new {templateShortName} {DotNetCliHelper.FormatAsCliArguments(arguments)}";
+        this.logger.Executed(name, args);
+        await Command.RunAsync(name, args).ConfigureAwait(false);
+    }
 
     internal static class DotNetCliHelper
     {

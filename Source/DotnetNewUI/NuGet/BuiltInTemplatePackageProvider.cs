@@ -11,19 +11,19 @@ using global::NuGet.Versioning;
 /// </summary>
 internal static class BuiltInTemplatePackageProvider
 {
-    public static async Task<IReadOnlyList<string>> GetAllTemplatePackagesAsync()
+    public static async Task<IReadOnlyList<string>> GetAllTemplatePackagesAsync(DotNetCli dotNetCli)
     {
-        var templateFolders = await GetTemplateFoldersAsync().ConfigureAwait(false);
+        var templateFolders = await GetTemplateFoldersAsync(dotNetCli).ConfigureAwait(false);
 
         return templateFolders
             .SelectMany(folder => Directory.EnumerateFiles(folder, "*.nupkg", SearchOption.TopDirectoryOnly))
             .ToList();
     }
 
-    private static async Task<IEnumerable<string>> GetTemplateFoldersAsync()
+    private static async Task<IEnumerable<string>> GetTemplateFoldersAsync(DotNetCli dotNetCli)
     {
-        var sdks = await DotNetCli.ListSdksAsync().ConfigureAwait(false);
-        var currentSdkVersion = await DotNetCli.GetSdkVersionAsync().ConfigureAwait(false);
+        var sdks = await dotNetCli.ListSdksAsync().ConfigureAwait(false);
+        var currentSdkVersion = await dotNetCli.GetSdkVersionAsync().ConfigureAwait(false);
 
         var (sdkVersion, sdkInstallDir) = sdks.Single(x => x.SdkVersion == currentSdkVersion);
         var dotnetRootPath = Path.GetDirectoryName(sdkInstallDir)!;
