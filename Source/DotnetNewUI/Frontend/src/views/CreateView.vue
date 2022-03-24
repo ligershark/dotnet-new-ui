@@ -84,8 +84,7 @@ export default defineComponent({
         return (
           (type.value === "" ||
             x.templateManifest?.tags?.type === type.value) &&
-          (language.value === "" ||
-            x.templateManifest?.tags?.language === language.value) &&
+          (language.value === "" || x.languages.includes(language.value)) &&
           (projectType.value === "" ||
             x.templateManifest?.classifications.includes(projectType.value)) &&
           x.templateManifest.name
@@ -99,11 +98,7 @@ export default defineComponent({
       const { data, error } = await useTemplates();
       if (data.value) {
         languages.value = [
-          ...new Set(
-            data.value
-              .map((x) => x.templateManifest?.tags?.language)
-              .filter((x) => x)
-          ),
+          ...new Set(data.value.flatMap((x) => x.languages).filter((x) => x)),
         ];
         projectTypes.value = [
           ...new Set(
