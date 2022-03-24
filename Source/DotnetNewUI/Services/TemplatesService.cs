@@ -17,6 +17,31 @@ public class TemplatesService : ITemplatesService
 
         var manifests = Enumerable
             .Concat(builtInTemplates, installedTemplates)
+
+            // Deduping templates with different versions and languages
+            .GroupBy(x => x.TemplateManifest.GroupIdentity)
+            .Select(g =>
+            {
+                // Select templates of latest version
+                var manifestsOfLatestVersion = g
+                    .GroupBy(x => x.Version)
+                    .MaxBy(x => x.Key)!
+                    .ToList();
+
+                var baseLine = manifestsOfLatestVersion.First();
+
+                // Aggregate Language tags
+                var languages = manifestsOfLatestVersion
+                    .Select(x => x.TemplateManifest.Tags?.Language)
+                    .Where(x => x is not null)
+                    .Select(x => x!)
+                    .Distinct()
+                    .OrderBy(x => x)
+                    .ToArray();
+
+                return baseLine with { Languages = languages };
+            })
+
             .ToList();
 
         return manifests;

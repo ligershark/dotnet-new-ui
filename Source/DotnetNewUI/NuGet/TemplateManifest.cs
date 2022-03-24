@@ -10,13 +10,13 @@ public record class TemplateManifest(
     string[] Classifications,
     string Description,
     string[] ShortName,
-    TemplateTags Tags)
+    TemplateTags? Tags)
 {
     [JsonConverter(typeof(StringToStringArrayConverter))]
     public string[] ShortName { get; init; } = ShortName;
 }
 
-public record class TemplateTags(string Language, string Type);
+public record class TemplateTags(string? Language, string Type);
 
 public record class TemplateIdeHostManifest(string? Icon, string? LearnMoreLink);
 
@@ -26,4 +26,7 @@ public record CompositeTemplateManifest(
     string? Base64Icon,
     bool IsBuiltIn,
     TemplateManifest TemplateManifest,
-    TemplateIdeHostManifest? IdeHostManifest);
+    TemplateIdeHostManifest? IdeHostManifest)
+{
+    public string[]? Languages { get; init; }
+}
