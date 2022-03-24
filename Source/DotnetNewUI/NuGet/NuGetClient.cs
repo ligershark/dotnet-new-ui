@@ -15,17 +15,14 @@ public class NuGetClient : INuGetClient
 
     public async Task<IReadOnlyList<NuGetPackageInfo>> GetNuGetTemplatesAsync()
     {
-        var nuGetFeed = await this.GetNuGetFeedAsync(NuGetUrlHelper.NuGetV3FeedUrl)
-            .ConfigureAwait(false);
+        var nuGetFeed = await this.GetNuGetFeedAsync(NuGetUrlHelper.NuGetV3FeedUrl).ConfigureAwait(false);
         var queryEndpoint = nuGetFeed.QueryUrl;
-        var iconEndpoint = nuGetFeed.PackageIconUrl;
 
         var firstPageUrl = NuGetUrlHelper.GetTemplatePackageQueryFirstPageUrl(queryEndpoint, PageSize);
         var firstPage = await this.GetTemplatePackagesAsync(firstPageUrl).ConfigureAwait(false);
 
         var remainingPagesUrls = NuGetUrlHelper.GetTemplatePackageQueryRemainingPagesUrls(queryEndpoint, firstPage.TotalHits, PageSize);
-        var remainingPages = await Task.WhenAll(remainingPagesUrls.Select(url => this.GetTemplatePackagesAsync(url)))
-            .ConfigureAwait(false);
+        var remainingPages = await Task.WhenAll(remainingPagesUrls.Select(url => this.GetTemplatePackagesAsync(url))).ConfigureAwait(false);
 
         var allTemplates = Enumerable
             .Concat(firstPage.Data, remainingPages.SelectMany(p => p.Data))

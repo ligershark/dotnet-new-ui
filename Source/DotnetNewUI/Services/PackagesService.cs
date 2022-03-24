@@ -25,25 +25,18 @@ public class PackagesService : IPackagesService
             .ToDictionary(x => x.PackageName, x => x.Version);
 
         return onlineTemplates
-            .Select(x =>
-            {
-                if (installedTemplates.TryGetValue(x.Id, out var installedVersion))
-                {
-                    return x with { IsInstalled = true, InstalledVersion = installedVersion };
-                }
-                else
-                {
-                    return x with { IsInstalled = false };
-                }
-            })
+            .Select(x => installedTemplates.TryGetValue(x.Id, out var installedVersion)
+                ? x with { IsInstalled = true, InstalledVersion = installedVersion }
+                : x with { IsInstalled = false })
             .ToList();
     }
 
     public async Task InstallTemplatePackageAsync(string packageId)
-        => await SimpleExec.Command.RunAsync("dotnet", $"new --install {packageId}").ConfigureAwait(false);
+        => await DotNetCli.InstallTemplatePackageAsync(packageId).ConfigureAwait(false);
 
     public async Task UninstallTemplatePackageAsync(string packageId)
-        => await SimpleExec.Command.RunAsync("dotnet", $"new --uninstall {packageId}").ConfigureAwait(false);
+        => await DotNetCli.UninstallTemplatePackageAsync(packageId).ConfigureAwait(false);
 
-    public Task UpdateTemplatePackageAsync(string packageId) => throw new NotImplementedException();
+    public Task UpdateTemplatePackageAsync(string packageId)
+        => throw new NotImplementedException();
 }

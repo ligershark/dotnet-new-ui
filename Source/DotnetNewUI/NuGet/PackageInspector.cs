@@ -17,7 +17,7 @@ public static class PackageInspector
         var (packageName, packageVersion) = GetPackageNameAndVersion(packagePath);
 
         using var file = File.OpenRead(packagePath);
-        var package = new ZipArchive(file);
+        using var package = new ZipArchive(file);
 
         var templateManifestRegex = new Regex("^(content/)?(?<template>.*)/\\.template\\.config/template\\.json$");
 
@@ -80,7 +80,7 @@ public static class PackageInspector
         if (relativeIconPath is not null)
         {
             var iconFilePath = Path.Combine(parentDirectory, relativeIconPath).Replace("\\", "/");
-            var iconFileType = Path.GetExtension(iconFilePath);
+            var iconFileType = Path.GetExtension(iconFilePath)[1..];
             var iconFile = archive.Entries.FirstOrDefault(e => e.FullName == iconFilePath);
 
             if (iconFile is not null)
@@ -91,7 +91,7 @@ public static class PackageInspector
                 var bytes = memoryStream.ToArray();
                 var base64Icon = Convert.ToBase64String(bytes);
 
-                return $"data:image/{iconFileType[1..]};base64,{base64Icon}";
+                return $"data:image/{iconFileType};base64,{base64Icon}";
             }
         }
 
