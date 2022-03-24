@@ -76,6 +76,6 @@ public class DotNetCli
         public static string FormatAsCliArguments(IReadOnlyDictionary<string, string?> arguments)
             => string.Join(' ', arguments
                 .Where(x => x.Value is not null)
-                .Select(x => $"--{x.Key} \"{x.Value}\""));
+                .Select(x => $"--{x.Key} \"{x.Value!.Replace('\\', '/')}\""));
     }
 }
