@@ -1,4 +1,4 @@
-import useFetch, { IResult } from "@/composables/Fetch";
+import { IResult, useEmptyFetch, useFetch } from "@/composables/Fetch";
 import IPackage from "@/models/IPackage";
 import ITemplate from "@/models/ITemplate";
 
@@ -14,12 +14,12 @@ export async function usePackages(): Promise<IResult<IPackage[]>> {
 
 export async function usePackageInstall(id: string) {
   const url = `${origin}/Packages/${id}`;
-  return await useFetch<string>(url, "POST");
+  return await useEmptyFetch(url, "POST");
 }
 
 export async function usePackageUninstall(id: string) {
   const url = `${origin}/Packages/${id}`;
-  return await useFetch<string>(url, "DELETE");
+  return await useEmptyFetch(url, "DELETE");
 }
 
 export async function useTemplates(): Promise<IResult<ITemplate[]>> {

@@ -36,13 +36,13 @@
     <ui-tags v-if="tags.length > 0" class="package__tags" :tags="tags" />
     <p class="package__description">{{ description }}</p>
     <ui-button
-      v-if="!isBuiltIn && isInstalled"
+      v-if="!isBuiltIn && installed"
       class="package__uninstall"
       @click="onUninstallClick"
       >☠️ Uninstall</ui-button
     >
     <ui-button
-      v-if="!isBuiltIn && !isInstalled"
+      v-if="!isBuiltIn && !installed"
       class="package__install"
       @click="onInstallClick"
       >💽 Install</ui-button
@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, toRefs } from "vue";
+import { computed, defineComponent, ref, toRefs } from "vue";
 import Button from "@/components/Button.vue";
 import Tags from "@/components/Tags.vue";
 import {
@@ -75,6 +75,8 @@ export default defineComponent({
   setup(props) {
     let { pack } = toRefs(props);
 
+    const installed = ref(pack.value.isInstalled);
+
     const iconWithFallbackUrl = computed(() => {
       return pack.value.iconUrl || "/static/images/default-package-icon.svg";
     });
@@ -83,22 +85,23 @@ export default defineComponent({
     });
 
     async function onInstallClick() {
-      const { data, error } = await usePackageInstall(pack.value.id);
-      if (data.value) {
-        pack.value.isInstalled = true;
-        alert(`${pack.value.title} installed!`);
-      } else if (error.value) {
+      const { error } = await usePackageInstall(pack.value.id);
+      console.log(error.value);
+      if (error.value) {
         console.error(error.value);
+      } else {
+        installed.value = true;
+        alert(`${pack.value.title} installed!`);
       }
     }
 
     async function onUninstallClick() {
-      const { data, error } = await usePackageUninstall(pack.value.id);
-      if (data.value) {
-        pack.value.isInstalled = false;
-        alert(`${pack.value.title} uninstalled!`);
-      } else if (error.value) {
+      const { error } = await usePackageUninstall(pack.value.id);
+      if (error.value) {
         console.error(error.value);
+      } else {
+        installed.value = false;
+        alert(`${pack.value.title} uninstalled!`);
       }
     }
 
@@ -107,6 +110,7 @@ export default defineComponent({
       onUninstallClick,
       iconWithFallbackUrl,
       titleAndId,
+      installed,
       ...pack.value,
     };
   },

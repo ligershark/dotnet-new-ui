@@ -1,11 +1,30 @@
 import { ref, Ref, UnwrapRef } from "vue";
 
+export interface IEmptyResult {
+  readonly error: Ref<string | null>;
+}
+
 export interface IResult<T> {
   readonly data: Ref<UnwrapRef<T> | null>;
   readonly error: Ref<string | null>;
 }
 
-export default async function useFetch<T>(
+export async function useEmptyFetch(
+  url: string,
+  method = "GET"
+): Promise<IEmptyResult> {
+  const error = ref<string | null>(null);
+
+  try {
+    await fetch(url, { method });
+  } catch (e) {
+    error.value = e as string;
+  }
+
+  return { error };
+}
+
+export async function useFetch<T>(
   url: string,
   method = "GET"
 ): Promise<IResult<T>> {
