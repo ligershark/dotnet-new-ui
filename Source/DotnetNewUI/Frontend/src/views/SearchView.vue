@@ -40,7 +40,9 @@ export default defineComponent({
         return packages.value?.slice(0, 100);
       }
       return packages.value
-        ?.filter((x) => x.title.includes(query.value))
+        ?.filter((x) =>
+          x.title.toLowerCase().includes(query.value.toLowerCase())
+        )
         .slice(0, 100);
     });
 
