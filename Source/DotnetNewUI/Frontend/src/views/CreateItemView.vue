@@ -4,7 +4,8 @@
     <form class="create-item__content" @submit.prevent="onSubmit">
       <fieldset class="create-item__fieldset">
         <label class="create-item__label" for="location"
-          >Directory <span class="create-item__label-required">*</span></label
+          >Output Directory
+          <span class="create-item__label-required">*</span></label
         >
         <input id="name" type="text" v-model="location" />
       </fieldset>
@@ -55,7 +56,9 @@ export default defineComponent({
 
     const template = ref<ITemplate | null>(null);
     const name = ref("");
-    const location = ref("");
+    const location = ref(
+      navigator.appVersion?.indexOf("Win") !== -1 ? "C:\\" : "\\"
+    );
     const languages = ref<Array<string>>([]);
     const language = ref("");
 
