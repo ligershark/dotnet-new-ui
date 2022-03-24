@@ -24,15 +24,13 @@ public class TemplatesService : ITemplatesService
 
     public async Task CreateNewFromTemplateAsync(string templateShortName, string outputPath, string? name, string? language)
     {
-        var arguments = new (string Name, string? Value)[]
+        var arguments = new Dictionary<string, string?>
         {
-            ("output", outputPath),
-            ("name", name),
-            ("language", language),
+            { "output", outputPath },
+            { "name", name },
+            { "language", language },
         };
 
-        var argumentsStr = string.Join(' ', arguments.Where(x => x.Value is not null).Select(x => $"--{x.Name} \"{x.Value}\""));
-
-        await SimpleExec.Command.RunAsync("dotnet", $"new {templateShortName} {argumentsStr}").ConfigureAwait(false);
+        await DotNetCli.CreateNewFromTemplateAsync(templateShortName, arguments).ConfigureAwait(false);
     }
 }
