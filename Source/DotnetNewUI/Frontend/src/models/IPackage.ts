@@ -5,6 +5,7 @@ export default interface IPackage {
   readonly id: string;
   readonly owners: Array<string>;
   readonly projectUrl: string;
+  readonly nuGetUrl: string;
   readonly summary: string;
   readonly tags: Array<string>;
   readonly title: string;

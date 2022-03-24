@@ -9,7 +9,7 @@
       height="256" />
     <div class="package__title">
       <h2 class="package__title-heading" :title="titleAndId">
-        <a class="package__title-heading-link" :href="projectUrl"
+        <a class="package__title-heading-link" :href="nuGetUrl"
           >{{ title }}
           <span
             v-if="verified"
@@ -29,6 +29,9 @@
         ⬇️ {{ totalDownloads.toLocaleString("en-US") }} downloads
       </p>
       <p class="package__version">🚀 Latest version: {{ version }}</p>
+      <a v-if="projectUrl" class="package__project-url" :href="projectUrl"
+        >🔗 Project website</a
+      >
     </div>
     <ui-tags v-if="tags.length > 0" class="package__tags" :tags="tags" />
     <p class="package__description">{{ description }}</p>
@@ -138,10 +141,12 @@ export default defineComponent({
   gap: 10px;
   flex-wrap: wrap;
 }
+.package__project-url,
 .package__title-heading-link {
   color: hsl(0, 0%, 100%);
   text-decoration: none;
 }
+.package__project-url:hover,
 .package__title-heading-link:hover {
   text-decoration: underline;
 }
