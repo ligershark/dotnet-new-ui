@@ -1,6 +1,6 @@
 ![Banner](Images/Banner.png)
 
-[![new-ui NuGet Package](https://img.shields.io/nuget/v/new-ui.svg)](https://www.nuget.org/packages/new-ui/) [![new-ui NuGet Package Downloads](https://img.shields.io/nuget/dt/new-ui)](https://www.nuget.org/packages/new-ui) [![GitHub Actions Status](https://github.com/ligershark/dotnet-new-ui/workflows/Build/badge.svg?branch=main)](https://github.com/ligershark/dotnet-new-ui/actions)
+[![new-ui NuGet Package](https://img.shields.io/nuget/v/new-ui.svg)](https://www.nuget.org/packages/new-ui/) [![new-ui NuGet Package Downloads](https://img.shields.io/nuget/dt/new-ui)](https://www.nuget.org/packages/new-ui) [![GitHub Actions Status](https://github.com/ligershark/dotnet-new-ui/workflows/Build/badge.svg?branch=main)](https://github.com/ligershark/dotnet-new-ui/actions) [![Twitter URL](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/RehanSaeedUK) [![Twitter Follow](https://img.shields.io/twitter/follow/rehansaeeduk.svg?style=social&label=Follow)](https://twitter.com/RehanSaeedUK)
 
 # .NET New UI
 
