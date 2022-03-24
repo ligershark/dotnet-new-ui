@@ -26,6 +26,12 @@ internal static partial class LoggerExtensions
     [LoggerMessage(
         EventId = 5003,
         Level = LogLevel.Information,
-        Message = "Executed {Name} {Arguments}.")]
-    public static partial void Executed(this ILogger logger, string name, string arguments);
+        Message = "Executed {Name} {Arguments}.\r\n{Output}{Error}")]
+    public static partial void ExecutedSuccessfully(this ILogger logger, string name, string arguments, string output, string error);
+
+    [LoggerMessage(
+        EventId = 5004,
+        Level = LogLevel.Information,
+        Message = "Executed {Name} {Arguments}.\r\n{Exception}")]
+    public static partial void ExecutedFailed(this ILogger logger, string name, string arguments, Exception exception);
 }

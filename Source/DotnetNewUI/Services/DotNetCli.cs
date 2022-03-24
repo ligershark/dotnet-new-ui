@@ -11,44 +11,45 @@ public class DotNetCli
 
     public async Task<IReadOnlyList<(SemanticVersion SdkVersion, string ParentDirectory)>> ListSdksAsync()
     {
-        var name = "dotnet";
-        var arguments = "--list-sdks";
-        this.logger.Executed(name, arguments);
-        var (output, _) = await Command.ReadAsync(name, arguments).ConfigureAwait(false);
+        var (output, _) = await this.RunAsync("dotnet", "--list-sdks").ConfigureAwait(false);
         return DotNetCliHelper.ParseDotNetListSdksOutput(output.Trim());
     }
 
     public async Task<SemanticVersion> GetSdkVersionAsync()
     {
-        var name = "dotnet";
-        var arguments = "--version";
-        this.logger.Executed(name, arguments);
-        var (output, _) = await Command.ReadAsync(name, arguments).ConfigureAwait(false);
+        var (output, _) = await this.RunAsync("dotnet", "--version").ConfigureAwait(false);
         return SemanticVersion.Parse(output.Trim());
     }
 
-    public async Task InstallTemplatePackageAsync(string packageId)
-    {
-        var name = "dotnet";
-        var arguments = $"new --install {packageId}";
-        this.logger.Executed(name, arguments);
-        await Command.RunAsync(name, arguments).ConfigureAwait(false);
-    }
+    public async Task InstallTemplatePackageAsync(string packageId) =>
+        await this
+            .RunAsync("dotnet", $"new --install {packageId}")
+            .ConfigureAwait(false);
 
-    public async Task UninstallTemplatePackageAsync(string packageId)
-    {
-        var name = "dotnet";
-        var arguments = $"new --uninstall {packageId}";
-        this.logger.Executed(name, arguments);
-        await Command.RunAsync(name, arguments).ConfigureAwait(false);
-    }
+    public async Task UninstallTemplatePackageAsync(string packageId) =>
+        await this
+            .RunAsync("dotnet", $"new --uninstall {packageId}")
+            .ConfigureAwait(false);
 
-    public async Task CreateNewFromTemplateAsync(string templateShortName, IReadOnlyDictionary<string, string?> arguments)
+    public async Task CreateNewFromTemplateAsync(string templateShortName, IReadOnlyDictionary<string, string?> arguments) =>
+        await this.RunAsync(
+            "dotnet",
+            $"new {templateShortName} {DotNetCliHelper.FormatAsCliArguments(arguments)}")
+            .ConfigureAwait(false);
+
+    private async Task<(string Output, string Error)> RunAsync(string name, string arguments)
     {
-        var name = "dotnet";
-        var args = $"new {templateShortName} {DotNetCliHelper.FormatAsCliArguments(arguments)}";
-        this.logger.Executed(name, args);
-        await Command.RunAsync(name, args).ConfigureAwait(false);
+        try
+        {
+            var (output, error) = await Command.ReadAsync(name, arguments).ConfigureAwait(false);
+            this.logger.ExecutedSuccessfully(name, arguments, output, error);
+            return (output, error);
+        }
+        catch (Exception exception)
+        {
+            this.logger.ExecutedFailed(name, arguments, exception);
+            throw;
+        }
     }
 
     internal static class DotNetCliHelper
