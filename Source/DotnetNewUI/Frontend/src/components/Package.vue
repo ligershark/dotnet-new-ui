@@ -1,5 +1,6 @@
 <template>
   <article class="package">
+    {{ version }}
     <img
       class="package__icon"
       alt=""
