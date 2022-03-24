@@ -40,8 +40,10 @@ export default defineComponent({
         return packages.value?.slice(0, 100);
       }
       return packages.value
-        ?.filter((x) =>
-          x.title.toLowerCase().includes(query.value.toLowerCase())
+        ?.filter(
+          (x) =>
+            x.id.toLowerCase().includes(query.value.toLowerCase()) ||
+            x.title.toLowerCase().includes(query.value.toLowerCase())
         )
         .slice(0, 100);
     });

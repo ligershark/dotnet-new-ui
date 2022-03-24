@@ -8,8 +8,17 @@
       width="256"
       height="256" />
     <div class="template__title">
-      <h2 class="template__title-heading">{{ templateManifest.name }}</h2>
-      <p v-if="templateManifest?.tags?.type" class="template__type">
+      <h2 class="template__title-heading">
+        <a
+          class="template__title-heading-link"
+          :href="ideHostManifest?.learnMoreLink"
+          >{{ templateManifest.name }}</a
+        >
+      </h2>
+      <p
+        v-if="templateManifest?.tags?.type"
+        class="template__type"
+        :class="`template__type--${templateManifest?.tags?.type}`">
         {{ templateManifest?.tags?.type }} template
       </p>
     </div>
@@ -86,10 +95,28 @@ export default defineComponent({
   gap: 10px;
   flex-wrap: wrap;
 }
+.template__title-heading-link {
+  color: hsl(0, 0%, 100%);
+  text-decoration: none;
+}
+.template__title-heading-link:hover {
+  text-decoration: underline;
+}
+.template__title-heading-link:not([href]):hover {
+  text-decoration: none;
+}
 .template__type {
-  background: #a62dd8;
   border-radius: 10px;
   padding: 2px 10px;
+}
+.template__type--item {
+  background: green;
+}
+.template__type--project {
+  background: blue;
+}
+.template__type--solution {
+  background: red;
 }
 
 .template__tags {

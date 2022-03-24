@@ -1,7 +1,10 @@
 export default interface ITemplate {
-  readonly PackageName: string;
+  readonly packageName: string;
+  readonly version: string;
   readonly base64Icon: string;
+  readonly isBuiltIn: boolean;
   readonly templateManifest: ITemplateManifest;
+  readonly ideHostManifest: IIdeHostManifest;
 }
 
 export interface ITemplateManifest {
@@ -12,6 +15,11 @@ export interface ITemplateManifest {
   description: string;
   shortName: string[];
   tags: ITemplateTags;
+}
+
+export interface IIdeHostManifest {
+  icon: string;
+  learnMoreLink: string;
 }
 
 export interface ITemplateTags {

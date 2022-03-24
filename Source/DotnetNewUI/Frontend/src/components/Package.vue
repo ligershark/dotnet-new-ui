@@ -8,7 +8,7 @@
       width="256"
       height="256" />
     <div class="package__title">
-      <h2 class="package__title-heading">
+      <h2 class="package__title-heading" :title="titleAndId">
         <a class="package__title-heading-link" :href="projectUrl"
           >{{ title }}
           <span
@@ -73,6 +73,9 @@ export default defineComponent({
     const iconWithFallbackUrl = computed(() => {
       return pack.value.iconUrl || "/static/images/default-package-icon.svg";
     });
+    const titleAndId = computed(() => {
+      return `${pack.value.title} (${pack.value.id})`;
+    });
 
     async function onInstallClick() {
       const { data, error } = await usePackageInstall(pack.value.id);
@@ -96,6 +99,7 @@ export default defineComponent({
       onInstallClick,
       onUninstallClick,
       iconWithFallbackUrl,
+      titleAndId,
       ...pack.value,
     };
   },
@@ -165,6 +169,11 @@ export default defineComponent({
 }
 
 .package__install {
+  grid-area: install;
+
+  align-self: start;
+}
+.package__uninstall {
   grid-area: install;
 
   align-self: start;
