@@ -1,6 +1,6 @@
 <template>
   <div class="installed">
-    <h1>Installed</h1>
+    <h1>Installed Template Packages</h1>
     <input
       type="search"
       placeholder="Template package search e.g. Boxed.Templates"

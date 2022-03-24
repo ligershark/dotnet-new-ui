@@ -15,6 +15,10 @@
           >{{ templateManifest.name }}</a
         >
       </h2>
+      <p class="template__title-authors">
+        by
+        <span>{{ templateManifest?.author }}</span>
+      </p>
       <p
         v-if="templateManifest?.tags?.type"
         class="template__type"
