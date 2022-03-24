@@ -87,20 +87,27 @@ public static class HostBuilderExtensions
 
     private static string GetFrontendDistDirectoryPath()
     {
-        var currentDirectory = new DirectoryInfo(Directory.GetCurrentDirectory());
-        var directories = currentDirectory.GetDirectories("*", SearchOption.AllDirectories);
-        var distDirectory = directories
-            .Where(x => !x.FullName.Contains("node_modules") &&
-                !x.FullName.Contains("bin") &&
-                !x.FullName.Contains("obj") &&
-                x.FullName.EndsWith(@"\Frontend\dist", StringComparison.Ordinal))
-            .FirstOrDefault();
-        if (distDirectory is not null)
+        try
         {
-            Console.WriteLine(distDirectory.FullName);
-            return distDirectory.FullName;
-        }
+            var currentDirectory = new DirectoryInfo(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!);
+            var directories = currentDirectory.GetDirectories("*", SearchOption.AllDirectories);
+            var distDirectory = directories
+                .Where(x => !x.FullName.Contains("node_modules") &&
+                    !x.FullName.Contains("obj") &&
+                    x.FullName.EndsWith(@"\Frontend\dist", StringComparison.Ordinal))
+                .FirstOrDefault();
+            if (distDirectory is not null)
+            {
+                Console.WriteLine(distDirectory.FullName);
+                return distDirectory.FullName;
+            }
 
-        throw new DirectoryNotFoundException($"Unable to find Frontend/dist directory under {currentDirectory}");
+            throw new DirectoryNotFoundException($"Unable to find Frontend/dist directory under {currentDirectory}");
+        }
+        catch (UnauthorizedAccessException)
+        {
+            Console.WriteLine("Please run from a user directory e.g. desktop or run as administrator.");
+            throw;
+        }
     }
 }
