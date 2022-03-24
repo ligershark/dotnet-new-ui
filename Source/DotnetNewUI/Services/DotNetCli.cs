@@ -26,7 +26,7 @@ public static class DotNetCli
     public static async Task CreateNewFromTemplateAsync(string templateShortName, IReadOnlyDictionary<string, string?> arguments)
         => await SimpleExec.Command.RunAsync("dotnet", $"new {templateShortName} {DotNetCliHelper.FormatAsCliArguments(arguments)}").ConfigureAwait(false);
 
-    public static class DotNetCliHelper
+    internal static class DotNetCliHelper
     {
         public static IReadOnlyList<(SemanticVersion SdkVersion, string DotnetRootPath)> ParseDotNetListSdksOutput(string listSdksOutput)
         {
