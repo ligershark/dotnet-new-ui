@@ -25,31 +25,31 @@ public static class DotNetCli
 
     public static async Task CreateNewFromTemplateAsync(string templateShortName, IReadOnlyDictionary<string, string?> arguments)
         => await SimpleExec.Command.RunAsync("dotnet", $"new {templateShortName} {DotNetCliHelper.FormatAsCliArguments(arguments)}").ConfigureAwait(false);
-}
 
-public static class DotNetCliHelper
-{
-    public static IReadOnlyList<(SemanticVersion SdkVersion, string DotnetRootPath)> ParseDotNetListSdksOutput(string listSdksOutput)
+    public static class DotNetCliHelper
     {
-        var output = listSdksOutput
-            .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
-            .Select(outputLine =>
-            {
-                var regexMatch = Regex.Match(outputLine, "^(?<version>.*) \\[(?<path>.*)\\]$");
-                var version = regexMatch.Groups["version"].Value;
-                var path = regexMatch.Groups["path"].Value;
+        public static IReadOnlyList<(SemanticVersion SdkVersion, string DotnetRootPath)> ParseDotNetListSdksOutput(string listSdksOutput)
+        {
+            var output = listSdksOutput
+                .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
+                .Select(outputLine =>
+                {
+                    var regexMatch = Regex.Match(outputLine, "^(?<version>.*) \\[(?<path>.*)\\]$");
+                    var version = regexMatch.Groups["version"].Value;
+                    var path = regexMatch.Groups["path"].Value;
 
-                var sdkVersion = SemanticVersion.Parse(version);
+                    var sdkVersion = SemanticVersion.Parse(version);
 
-                return (sdkVersion!, path!);
-            })
-            .ToList();
+                    return (sdkVersion!, path!);
+                })
+                .ToList();
 
-        return output;
+            return output;
+        }
+
+        public static string FormatAsCliArguments(IReadOnlyDictionary<string, string?> arguments)
+            => string.Join(' ', arguments
+                .Where(x => x.Value is not null)
+                .Select(x => $"--{x.Key} \"{x.Value}\""));
     }
-
-    public static string FormatAsCliArguments(IReadOnlyDictionary<string, string?> arguments)
-        => string.Join(' ', arguments
-            .Where(x => x.Value is not null)
-            .Select(x => $"--{x.Key} \"{x.Value}\""));
 }
