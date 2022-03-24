@@ -64,7 +64,10 @@ export default defineComponent({
   setup(props) {
     const { template } = toRefs(props);
 
-    const iconUrl = computed(() => template.value.base64Icon);
+    const iconUrl = computed(
+      () =>
+        template.value.base64Icon || "/static/images/default-package-icon.svg"
+    );
 
     function getLanguageClass(language: string) {
       return language.replace("#", "");
