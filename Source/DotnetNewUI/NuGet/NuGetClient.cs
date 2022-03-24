@@ -26,6 +26,7 @@ public class NuGetClient : INuGetClient
 
         var allTemplates = Enumerable
             .Concat(firstPage.Data, remainingPages.SelectMany(p => p.Data))
+            .Select(x => x with { NuGetUrl = NuGetUrlHelper.GetNuGetUrl(x.Id) })
             .ToList();
 
         return allTemplates;

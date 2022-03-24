@@ -19,15 +19,34 @@ public class PackagesService : IPackagesService
 
         var onlineTemplates = await this.cachedOnlinePackages.ConfigureAwait(false);
 
-        var installedTemplates = InstalledTemplatePackageProvider
+        var builtInTemplates = await BuiltInTemplatePackageProvider.GetAllTemplatePackagesAsync().ConfigureAwait(false);
+        var builtInTemplateDictionary = builtInTemplates
+            .Select(x => PackageInspector.GetPackageNameAndVersion(x))
+            .GroupBy(x => x.PackageName)
+            .ToDictionary(g => g.Key.ToLowerInvariant(), g => g.Select(x => x.Version).Max());
+
+        var installedTemplateDictionary = InstalledTemplatePackageProvider
             .GetAllTemplatePackages()
             .Select(x => PackageInspector.GetPackageNameAndVersion(x))
-            .ToDictionary(x => x.PackageName, x => x.Version);
+            .GroupBy(x => x.PackageName)
+            .ToDictionary(g => g.Key.ToLowerInvariant(), g => g.Select(x => x.Version).Max());
 
         return onlineTemplates
-            .Select(x => installedTemplates.TryGetValue(x.Id, out var installedVersion)
-                ? x with { IsInstalled = true, InstalledVersion = installedVersion }
-                : x with { IsInstalled = false })
+            .Select(x =>
+            {
+                if (builtInTemplateDictionary.TryGetValue(x.Id.ToLowerInvariant(), out var builtInVersion))
+                {
+                    return x with { IsInstalled = true, InstalledVersion = builtInVersion, IsBuiltIn = true };
+                }
+                else if (installedTemplateDictionary.TryGetValue(x.Id.ToLowerInvariant(), out var installedVersion))
+                {
+                    return x with { IsInstalled = true, InstalledVersion = installedVersion };
+                }
+                else
+                {
+                    return x with { IsInstalled = false };
+                }
+            })
             .ToList();
     }
 
