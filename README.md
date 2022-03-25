@@ -12,6 +12,10 @@ Installation is as easy as:
 
 `dotnet tool install --global new-ui`
 
+You can then start .NET New UI simply with:
+
+`new-ui`
+
 # Continuous Integration
 
 [![GitHub Actions Build History](https://buildstats.info/github/chart/ligershark/dotnet-new-ui?branch=main&includeBuildsFromPullRequest=false)](https://github.com/ligershark/dotnet-new-ui/actions)
