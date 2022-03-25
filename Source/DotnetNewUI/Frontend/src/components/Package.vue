@@ -39,13 +39,13 @@
       v-if="!isBuiltIn && installed"
       class="package__uninstall"
       @click="onUninstallClick"
-      >☠️ Uninstall</ui-button
+      >❌ Uninstall</ui-button
     >
     <ui-button
       v-if="!isBuiltIn && !installed"
       class="package__install"
       @click="onInstallClick"
-      >💽 Install</ui-button
+      >✅ Install</ui-button
     >
   </article>
 </template>

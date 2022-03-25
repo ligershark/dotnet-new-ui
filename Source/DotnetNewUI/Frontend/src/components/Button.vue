@@ -19,9 +19,10 @@ export default defineComponent({
 .button {
   display: inline-block;
 
-  background: hsl(0, 0%, 100%);
+  background: transparent;
+  border: 1px solid hsl(0, 0%, 100%);
   border-radius: 4px;
-  color: hsl(283, 69%, 41%);
+  color: hsl(0, 0%, 100%);
   cursor: pointer;
   font-size: 1.25rem;
   line-height: 1.5;
@@ -32,11 +33,7 @@ export default defineComponent({
   transition: transform 0.15s ease-in-out;
 }
 .button:hover {
-  transform: scale(1.1);
-}
-.button--active {
-  background: hsla(257, 85%, 15%, 0.25);
-  color: hsl(0, 0%, 100%);
+  background: hsl(283, 69%, 41%);
   transform: scale(1.1);
 }
 .button[disabled] {
