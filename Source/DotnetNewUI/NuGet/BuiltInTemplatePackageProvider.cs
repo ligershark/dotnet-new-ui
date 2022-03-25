@@ -75,7 +75,6 @@ internal static class BuiltInTemplatePackageProvider
                 .OrderBy(x => x.Version)
                 .TakeWhile(x => x.Version <= sdkVersion)
                 .GroupBy(x => new Version(x.Version.Major, x.Version.Minor))
-                .Select(g => g.Last())
-                .Select(x => x.Dir);
+                .Select(g => g.Last().Dir);
     }
 }
