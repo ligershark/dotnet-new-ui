@@ -11,6 +11,7 @@
     "core-js": "^3.8.3",
     "vue": "^3.2.13",
     "vue-meta": "^3.0.0-alpha.10",
+    "vue-nprogress": "^0.2.0",
     "vue-router": "^4.0.3"
   },
   "devDependencies": {

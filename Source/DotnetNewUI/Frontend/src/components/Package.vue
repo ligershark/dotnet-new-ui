@@ -91,7 +91,6 @@ export default defineComponent({
       isLoading.value = true;
       try {
         const { error } = await usePackageInstall(pack.value.id);
-        console.log(error.value);
         if (error.value) {
           console.error(error.value);
         } else {

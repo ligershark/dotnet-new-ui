@@ -4,17 +4,20 @@
       content ? `${content} | .NET New UI` : `.NET New UI`
     }}</template>
   </metainfo>
+  <nprogress-container />
   <ui-navigation />
   <router-view />
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
+import NprogressContainer from "vue-nprogress/src/NprogressContainer";
 import Navigation from "@/components/Navigation.vue"; // @ is an alias to /src
 
 export default defineComponent({
   name: "App",
   components: {
+    NprogressContainer,
     "ui-navigation": Navigation,
   },
 });
