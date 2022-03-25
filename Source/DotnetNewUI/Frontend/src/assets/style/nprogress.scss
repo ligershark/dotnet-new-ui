@@ -1,11 +1,15 @@
 #nprogress .bar {
-  background: #fff !important;
+  background: linear-gradient(
+    90.05deg,
+    #f65163 42.42%,
+    #ffbe46 106.66%
+  ) !important;
   height: 3px !important;
   margin-top: 1px;
 }
 
 #nprogress .peg {
-  box-shadow: 0 0 10px #fff, 0 0 5px #fff !important;
+  box-shadow: 0 0 10px #f65163, 0 0 5px #ffbe46 !important;
 }
 
 #nprogress .spinner-icon {
@@ -13,6 +17,6 @@
   height: 25px !important;
 
   border: solid 3px transparent !important;
-  border-top-color: #fff !important;
-  border-left-color: #fff !important;
+  border-top-color: #f65163 !important;
+  border-left-color: #ffbe46 !important;
 }

@@ -2,6 +2,7 @@ body {
   background-image: url("/public/static/images/anniversary-bg.png"),
     linear-gradient(90deg, #190649 95%, #a62dd8 5%);
   background-position-x: 38%;
+  background-repeat: repeat-y;
   // color: var(--global-body-color);
   font-family: "Segoe UI", Helvetica, Arial, sans-serif;
   // font-weight: var(--global-font-weight-normal);
@@ -11,4 +12,12 @@ body {
   // transition: background-color var(--global-duration-3) ease-out,
   //   border-color var(--global-duration-3) ease-out,
   //   color var(--global-duration-3) ease-out;
+}
+
+@media screen and (min-width: 2000px) {
+  body {
+    background-image: url("/public/static/images/anniversary-bg.png"),
+      linear-gradient(90deg, #190649 85%, #a62dd8 15%);
+    background-position-x: 65%;
+  }
 }
