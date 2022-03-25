@@ -8,6 +8,10 @@ if (process.env.NODE_ENV === "development") {
   origin = "http://localhost:4999";
 }
 
+export function getOriginUrl() {
+  return origin;
+}
+
 export async function usePackages(): Promise<IResult<IPackage[]>> {
   const { setIsLoading } = useLoading();
   try {
