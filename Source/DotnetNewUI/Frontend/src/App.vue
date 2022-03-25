@@ -25,3 +25,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss">
+.app__router {
+  min-height: 80vh;
+}
+</style>

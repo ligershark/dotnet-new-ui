@@ -134,6 +134,7 @@ export default defineComponent({
 <style type="scss">
 .create {
   display: grid;
+  align-content: start;
   gap: 20px;
 
   padding: 20px;

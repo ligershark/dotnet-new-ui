@@ -42,6 +42,7 @@
 
 <script lang="ts">
 import { computed, defineComponent, onMounted, ref } from "vue";
+import { useMeta } from "vue-meta";
 import { useRoute } from "vue-router";
 import Button from "@/components/Button.vue";
 import { useCreate, useTemplates } from "@/composables/Templates";
@@ -55,6 +56,10 @@ export default defineComponent({
   setup() {
     const route = useRoute();
     const templateId = route.params.id;
+
+    useMeta({
+      title: `Create ${templateId}`,
+    });
 
     const template = ref<ITemplate | null>(null);
     const name = ref("");
@@ -131,6 +136,7 @@ export default defineComponent({
 <style lang="scss">
 .create-item {
   display: grid;
+  align-content: start;
   gap: 20px;
   justify-content: center;
 
