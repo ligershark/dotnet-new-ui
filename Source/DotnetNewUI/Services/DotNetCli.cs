@@ -1,11 +1,13 @@
 namespace DotnetNewUI.Services;
 using System.Text.RegularExpressions;
 using global::NuGet.Versioning;
+using Nito.AsyncEx;
 using SimpleExec;
 
 public class DotNetCli
 {
     private readonly ILogger<DotNetCli> logger;
+    private readonly AsyncLock asyncLock = new();
 
     public DotNetCli(ILogger<DotNetCli> logger) => this.logger = logger;
 
@@ -39,17 +41,23 @@ public class DotNetCli
 
     private async Task<(string Output, string Error)> RunAsync(string name, string arguments)
     {
-        try
+        using (await this.asyncLock.LockAsync())
         {
-            using var cts = new CancellationTokenSource(30_000);
-            var (output, error) = await Command.ReadAsync(name, arguments, cancellationToken: cts.Token).ConfigureAwait(false);
-            this.logger.ExecutedSuccessfully(name, arguments, output, error);
-            return (output, error);
-        }
-        catch (Exception exception)
-        {
-            this.logger.ExecutedFailed(name, arguments, exception);
-            throw;
+            try
+            {
+                using var cts = new CancellationTokenSource(30_000);
+                {
+                    var (output, error) = await Command.ReadAsync(name, arguments, cancellationToken: cts.Token).ConfigureAwait(false);
+
+                    this.logger.ExecutedSuccessfully(name, arguments, output, error);
+                    return (output, error);
+                }
+            }
+            catch (Exception exception)
+            {
+                this.logger.ExecutedFailed(name, arguments, exception);
+                throw;
+            }
         }
     }
 
