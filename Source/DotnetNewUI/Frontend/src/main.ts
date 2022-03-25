@@ -6,7 +6,7 @@ import App from "./App.vue";
 import router from "./router";
 
 window.onbeforeunload = function () {
-  fetch("/shutdown", { method: "POST", keepalive: true });
+  fetch("/Shutdown", { method: "POST", keepalive: true });
 };
 
 createApp(App).use(createMetaManager()).use(router).mount("#app");
