@@ -33,7 +33,9 @@
         </p>
       </fieldset>
 
-      <ui-button :disabled="!isValid" type="submit">🚀 Create</ui-button>
+      <ui-button :disabled="isLoading || !isValid" type="submit"
+        >🚀 Create</ui-button
+      >
     </form>
   </div>
 </template>
@@ -61,6 +63,7 @@ export default defineComponent({
     );
     const languages = ref<Array<string>>([]);
     const language = ref("");
+    const isLoading = ref<boolean>(false);
 
     const isItemTemplate = computed(
       () => template.value?.templateManifest?.tags?.type === "item"
@@ -90,16 +93,21 @@ export default defineComponent({
 
     async function onSubmit() {
       if (template.value) {
-        const { error } = await useCreate(
-          template.value.templateManifest.shortName[0],
-          location.value,
-          name.value,
-          language.value
-        );
-        if (error.value) {
-          console.error(error.value);
-        } else {
-          alert("Created!");
+        isLoading.value = true;
+        try {
+          const { error } = await useCreate(
+            template.value.templateManifest.shortName[0],
+            location.value,
+            name.value,
+            language.value
+          );
+          if (error.value) {
+            console.error(error.value);
+          } else {
+            alert("Created!");
+          }
+        } finally {
+          isLoading.value = false;
         }
       }
     }
@@ -111,6 +119,7 @@ export default defineComponent({
       location,
       languages,
       isValid,
+      isLoading,
       language,
       onChangeLocation,
       onSubmit,

@@ -39,12 +39,14 @@
       v-if="!isBuiltIn && installed"
       class="package__uninstall"
       @click="onUninstallClick"
+      :disabled="isLoading"
       >❌ Uninstall</ui-button
     >
     <ui-button
       v-if="!isBuiltIn && !installed"
       class="package__install"
       @click="onInstallClick"
+      :disabled="isLoading"
       >✅ Install</ui-button
     >
   </article>
@@ -76,6 +78,7 @@ export default defineComponent({
     let { pack } = toRefs(props);
 
     const installed = ref(pack.value.isInstalled);
+    const isLoading = ref<boolean>(false);
 
     const iconWithFallbackUrl = computed(() => {
       return pack.value.iconUrl || "/static/images/default-package-icon.svg";
@@ -85,23 +88,33 @@ export default defineComponent({
     });
 
     async function onInstallClick() {
-      const { error } = await usePackageInstall(pack.value.id);
-      console.log(error.value);
-      if (error.value) {
-        console.error(error.value);
-      } else {
-        installed.value = true;
-        alert(`${pack.value.title} installed!`);
+      isLoading.value = true;
+      try {
+        const { error } = await usePackageInstall(pack.value.id);
+        console.log(error.value);
+        if (error.value) {
+          console.error(error.value);
+        } else {
+          installed.value = true;
+          alert(`${pack.value.title} installed!`);
+        }
+      } finally {
+        isLoading.value = false;
       }
     }
 
     async function onUninstallClick() {
-      const { error } = await usePackageUninstall(pack.value.id);
-      if (error.value) {
-        console.error(error.value);
-      } else {
-        installed.value = false;
-        alert(`${pack.value.title} uninstalled!`);
+      isLoading.value = true;
+      try {
+        const { error } = await usePackageUninstall(pack.value.id);
+        if (error.value) {
+          console.error(error.value);
+        } else {
+          installed.value = false;
+          alert(`${pack.value.title} uninstalled!`);
+        }
+      } finally {
+        isLoading.value = false;
       }
     }
 
@@ -111,6 +124,7 @@ export default defineComponent({
       iconWithFallbackUrl,
       titleAndId,
       installed,
+      isLoading,
       ...pack.value,
     };
   },
