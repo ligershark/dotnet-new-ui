@@ -42,12 +42,12 @@ public class PackagesService : IPackagesService
         public static IReadOnlyList<NuGetPackageInfo> MergeResults(IReadOnlyList<NuGetPackageInfo> onlinePackages, IReadOnlyList<string> builtInPackagePaths, IReadOnlyList<string> installedPackagePaths)
         {
             var builtInTemplateDictionary = builtInPackagePaths
-                .Select(x => PackageInspector.GetPackageNameAndVersion(x))
+                .Select(x => PackageInspector.PackageInspectorHelper.GetPackageNameAndVersion(x))
                 .GroupBy(x => x.PackageName)
                 .ToDictionary(g => g.Key.ToLowerInvariant(), g => g.Select(x => x.Version).Max());
 
             var installedTemplateDictionary = installedPackagePaths
-                .Select(x => PackageInspector.GetPackageNameAndVersion(x))
+                .Select(x => PackageInspector.PackageInspectorHelper.GetPackageNameAndVersion(x))
                 .GroupBy(x => x.PackageName)
                 .ToDictionary(g => g.Key.ToLowerInvariant(), g => g.Select(x => x.Version).Max());
 
