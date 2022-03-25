@@ -7,17 +7,20 @@
   <nprogress-container />
   <ui-navigation />
   <router-view />
+  <ui-footer />
 </template>
 
 <script lang="ts">
 import { defineComponent } from "vue";
 import NprogressContainer from "vue-nprogress/src/NprogressContainer";
-import Navigation from "@/components/Navigation.vue"; // @ is an alias to /src
+import Footer from "@/components/Footer.vue";
+import Navigation from "@/components/Navigation.vue";
 
 export default defineComponent({
   name: "App",
   components: {
     NprogressContainer,
+    "ui-footer": Footer,
     "ui-navigation": Navigation,
   },
 });
