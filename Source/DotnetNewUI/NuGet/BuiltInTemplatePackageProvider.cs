@@ -6,75 +6,75 @@ using global::NuGet.Versioning;
 /// <summary>
 /// Returns list of *.nupkg files from C:\Program Files\dotnet\templates\x.x.x.x\ (on Windows) to be installed.
 /// <para>
-/// Based on <see href="https://github.com/dotnet/sdk/blob/main/src/Cli/dotnet/commands/dotnet-new/BuiltInTemplatePackageProvider.cs">'dotnet new' source code</see>.
+/// Inspired by <see href="https://github.com/dotnet/sdk/blob/main/src/Cli/dotnet/commands/dotnet-new/BuiltInTemplatePackageProvider.cs">'dotnet new' source code</see>.
 /// </para>
 /// </summary>
 internal static class BuiltInTemplatePackageProvider
 {
     public static async Task<IReadOnlyList<string>> GetAllTemplatePackagesAsync(DotNetCli dotNetCli)
     {
-        var templateFolders = await GetTemplateFoldersAsync(dotNetCli).ConfigureAwait(false);
+        var (sdkVersion, sdkInstallDir) = await GetCurrentSdkInfoAsync(dotNetCli).ConfigureAwait(false);
 
-        return templateFolders
+        return GetTemplateFolders(sdkVersion, sdkInstallDir)
+            .Where(folder => Directory.Exists(folder))
             .SelectMany(folder => Directory.EnumerateFiles(folder, "*.nupkg", SearchOption.TopDirectoryOnly))
             .ToList();
     }
 
-    private static async Task<IEnumerable<string>> GetTemplateFoldersAsync(DotNetCli dotNetCli)
+    private static async Task<(SemanticVersion Version, string InstallDir)> GetCurrentSdkInfoAsync(DotNetCli dotNetCli)
     {
         var sdks = await dotNetCli.ListSdksAsync().ConfigureAwait(false);
         var currentSdkVersion = await dotNetCli.GetSdkVersionAsync().ConfigureAwait(false);
+        return sdks.Single(x => x.SdkVersion == currentSdkVersion);
+    }
 
-        var (sdkVersion, sdkInstallDir) = sdks.Single(x => x.SdkVersion == currentSdkVersion);
-        var dotnetRootPath = Path.GetDirectoryName(sdkInstallDir)!;
+    private static IEnumerable<string> GetTemplateFolders(SemanticVersion sdkVersion, string sdkInstallDir)
+    {
+        var dotnetRootDir = BuiltInTemplatePackageProviderHelper.GetDotnetRootDirectory(sdkInstallDir);
 
         var templateFolders = new List<string>();
 
-        var globalTemplateFolders = GetGlobalTemplateFolders(dotnetRootPath, sdkVersion);
+        var globalTemplateFolders = GetGlobalTemplateFolders(dotnetRootDir, sdkVersion);
         if (globalTemplateFolders is not null)
         {
             templateFolders.AddRange(globalTemplateFolders);
         }
 
-        var sdkTemplateFolder = GetSdkTemplateFolder(dotnetRootPath, sdkVersion);
-        if (sdkTemplateFolder is not null)
-        {
-            templateFolders.Add(sdkTemplateFolder);
-        }
+        templateFolders.Add(BuiltInTemplatePackageProviderHelper.GetSdkTemplateDir(dotnetRootDir, sdkVersion));
 
         return templateFolders;
     }
 
-    private static IEnumerable<string>? GetGlobalTemplateFolders(string dotnetRootPath, SemanticVersion sdkVersion)
+    private static IEnumerable<string>? GetGlobalTemplateFolders(string dotnetRootDir, SemanticVersion sdkVersion)
     {
-        var templatesRootFolder = Path.Combine(dotnetRootPath, "templates");
+        var templatesRootDir = BuiltInTemplatePackageProviderHelper.GetGlobalTemplatesRootDir(dotnetRootDir);
 
-        if (Directory.Exists(templatesRootFolder))
+        if (Directory.Exists(templatesRootDir))
         {
-            var templateDirs = Directory
-                .EnumerateDirectories(templatesRootFolder, "*.*", SearchOption.TopDirectoryOnly)
-                .Select(path => (Path: path, Version: SemanticVersion.Parse(Path.GetFileName(path))))
-                .OrderBy(x => x.Version)
-                .TakeWhile(x => x.Version <= sdkVersion)
-                .GroupBy(x => new Version(x.Version.Major, x.Version.Minor))
-                .Select(g => g.Last())
-                .Select(x => x.Path);
-
-            return templateDirs;
+            var templateVersionDirs = Directory.EnumerateDirectories(templatesRootDir, "*.*", SearchOption.TopDirectoryOnly);
+            return BuiltInTemplatePackageProviderHelper.SelectAppropriateTemplateDirs(templateVersionDirs, sdkVersion);
         }
 
         return null;
     }
 
-    private static string? GetSdkTemplateFolder(string dotnetRootPath, SemanticVersion sdkVersion)
+    internal static class BuiltInTemplatePackageProviderHelper
     {
-        var templatesDir = Path.Combine(dotnetRootPath, "sdk", sdkVersion.ToNormalizedString(), "templates");
+        public static string GetDotnetRootDirectory(string sdkInstallDir)
+            => Path.GetDirectoryName(sdkInstallDir)!;
 
-        if (Directory.Exists(templatesDir))
-        {
-            return templatesDir;
-        }
+        public static string GetGlobalTemplatesRootDir(string dotnetRootDir)
+            => Path.Combine(dotnetRootDir, "templates");
 
-        return null;
+        public static string GetSdkTemplateDir(string dotnetRootDir, SemanticVersion sdkVersion)
+            => Path.Combine(dotnetRootDir, "sdk", sdkVersion.ToNormalizedString(), "templates");
+
+        public static IEnumerable<string> SelectAppropriateTemplateDirs(IEnumerable<string> templateVersionDirs, SemanticVersion sdkVersion)
+            => templateVersionDirs
+                .Select(dir => (Dir: dir, Version: SemanticVersion.Parse(Path.GetFileName(dir))))
+                .OrderBy(x => x.Version)
+                .TakeWhile(x => x.Version <= sdkVersion)
+                .GroupBy(x => new Version(x.Version.Major, x.Version.Minor))
+                .Select(g => g.Last().Dir);
     }
 }
