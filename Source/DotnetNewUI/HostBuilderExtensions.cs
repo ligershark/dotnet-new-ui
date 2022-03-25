@@ -14,13 +14,19 @@ using Spectre.Console;
 
 public static class HostBuilderExtensions
 {
+    private static bool IsLoggingEnabled => Debugger.IsAttached ||
+        string.Equals(
+            Environment.GetEnvironmentVariable("DOTNET_NEW_UI_LOGGING", EnvironmentVariableTarget.User),
+            "true",
+            StringComparison.OrdinalIgnoreCase);
+
     public static void ConfigureHost(this IHostBuilder hostBuilder) =>
         hostBuilder
             .UseContentRoot(Directory.GetCurrentDirectory())
             .ConfigureLogging(loggingBuilder =>
             {
                 loggingBuilder.AddDebug();
-                if (Debugger.IsAttached)
+                if (IsLoggingEnabled)
                 {
                     loggingBuilder.AddConsole();
                 }
@@ -98,7 +104,11 @@ public static class HostBuilderExtensions
                 .FirstOrDefault();
             if (distDirectory is not null)
             {
-                Console.WriteLine(distDirectory.FullName);
+                if (IsLoggingEnabled)
+                {
+                    Console.WriteLine(distDirectory.FullName);
+                }
+
                 return distDirectory.FullName;
             }
 
