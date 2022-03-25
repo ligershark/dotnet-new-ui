@@ -6,7 +6,7 @@
   </metainfo>
   <nprogress-container />
   <ui-navigation />
-  <router-view />
+  <router-view class="app__router" />
   <ui-footer />
 </template>
 
@@ -25,16 +25,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style lang="scss">
-:root {
-  background: hsl(257, 85%, 15%);
-  color: white;
-}
-
-body {
-  background-image: url("/public/static/images/anniversary-bg.png"),
-    linear-gradient(90deg, #190649 95%, #a62dd8 5%);
-  background-position-x: 38%;
-}
-</style>

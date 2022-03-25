@@ -1,5 +1,7 @@
 body {
-  // background-color: var(--global-background-color);
+  background-image: url("/public/static/images/anniversary-bg.png"),
+    linear-gradient(90deg, #190649 95%, #a62dd8 5%);
+  background-position-x: 38%;
   // color: var(--global-body-color);
   font-family: "Segoe UI", Helvetica, Arial, sans-serif;
   // font-weight: var(--global-font-weight-normal);
