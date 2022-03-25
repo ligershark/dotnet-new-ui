@@ -6,6 +6,8 @@
 
 A [.NET global tool](https://docs.microsoft.com/en-us/dotnet/core/tools/global-tools) which helps you install, uninstall and manage project templates while also helping to create projects from templates.
 
+![.NET New UI Demonstration](Images/DotnetNewUI.gif)
+
 # How can I install and use it?
 
 Installation is as easy as:
