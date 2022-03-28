@@ -2,6 +2,7 @@ namespace DotnetNewUI.NuGet;
 
 using System.IO.Compression;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
@@ -23,11 +24,23 @@ public static class PackageInspector
             {
                 var templateManifest = TryGetTemplateManifest(archive, templateConfigDir);
                 var ideHostManifest = TryGetIdeHostManifest(archive, templateConfigDir);
+                var dotnetCliHostManifest = TryGetDotnetCliHostManifest(archive, templateConfigDir);
                 var base64TemplateIcon = TryGetBase64TemplateIcon(archive, templateConfigDir, ideHostManifest?.Icon);
+
+                if (templateManifest is not null)
+                {
+                    templateManifest = templateManifest with { Symbols = PackageInspectorHelper.MergeSymbolsWithSymbolInfo(templateManifest.Symbols, dotnetCliHostManifest?.SymbolInfo) };
+                }
 
                 // templateManifest! -> possibly forcing null into a non-nullable property, but filtering those cases out immediately
                 // it makes it easier for the rest of app, so we don't have to check for nulls
-                return new CompositeTemplateManifest(packageName, packageVersion, base64TemplateIcon ?? base64PackageIcon, isBuiltIn, templateManifest!, ideHostManifest);
+                return new CompositeTemplateManifest(
+                    packageName,
+                    packageVersion,
+                    base64TemplateIcon ?? base64PackageIcon,
+                    isBuiltIn,
+                    templateManifest!,
+                    ideHostManifest);
             })
             .Where(x => x.TemplateManifest is not null)
             .ToList();
@@ -67,6 +80,19 @@ public static class PackageInspector
         return null;
     }
 
+    private static DotnetCliHostManifest? TryGetDotnetCliHostManifest(ZipArchive archive, string templateConfigDir)
+    {
+        var dotnetCliHostManifestPath = PackageInspectorHelper.GetDotnetCliHostManifestPath(templateConfigDir);
+        var dotnetCliHostManifestFile = archive.Entries.SingleOrDefault(x => string.Equals(x.FullName, dotnetCliHostManifestPath, StringComparison.OrdinalIgnoreCase));
+        if (dotnetCliHostManifestFile is not null)
+        {
+            using var dotnetCliHostManifestFileStream = dotnetCliHostManifestFile.Open();
+            return PackageInspectorHelper.ParseJsonDotnetCliHostManifest(dotnetCliHostManifestFileStream);
+        }
+
+        return null;
+    }
+
     private static string? TryGetBase64PackageIcon(ZipArchive archive, string? iconPath)
     {
         if (iconPath is not null)
@@ -97,6 +123,12 @@ public static class PackageInspector
         {
             AllowTrailingCommas = true,
             ReadCommentHandling = JsonCommentHandling.Skip,
+            NumberHandling = JsonNumberHandling.AllowReadingFromString,
+            Converters =
+            {
+                new DynamicJsonBoolConverter(), // would be JsonBooleanHandling.AllowReadingFromString, if it existed
+                new StringToStringArrayConverter(), // will correctly convert both individual strings and string arrays to string arrays
+            },
         };
 
         public static (string PackageName, string Version) GetPackageNameAndVersion(string filePath)
@@ -131,6 +163,9 @@ public static class PackageInspector
         public static string GetIdeHostManifestPath(string templateConfigDir)
             => Path.Combine(templateConfigDir, "ide.host.json").Replace("\\", "/");
 
+        public static string GetDotnetCliHostManifestPath(string templateConfigDir)
+            => Path.Combine(templateConfigDir, "dotnetcli.host.json").Replace("\\", "/");
+
         public static string GetTemplateIconPath(string templateConfigDir, string iconRelativePath)
             => Path.Combine(templateConfigDir, iconRelativePath).Replace("\\", "/");
 
@@ -151,6 +186,9 @@ public static class PackageInspector
         public static TemplateIdeHostManifest ParseJsonIdeHostManifest(Stream stream)
             => JsonSerializer.Deserialize<TemplateIdeHostManifest>(stream, JsonSerializerOptions)!;
 
+        public static DotnetCliHostManifest ParseJsonDotnetCliHostManifest(Stream stream)
+            => JsonSerializer.Deserialize<DotnetCliHostManifest>(stream, JsonSerializerOptions)!;
+
         public static string GetBase64Icon(Stream stream, string fileName)
         {
             var fileType = Path.GetExtension(fileName);
@@ -161,6 +199,24 @@ public static class PackageInspector
             var base64Icon = Convert.ToBase64String(bytes);
 
             return $"data:image/{fileType};base64,{base64Icon}";
+        }
+
+        public static IReadOnlyDictionary<string, Symbol>? MergeSymbolsWithSymbolInfo(
+            IReadOnlyDictionary<string, Symbol>? symbols,
+            IReadOnlyDictionary<string, SymbolInfo>? symbolInfo)
+        {
+            if (symbols is null || symbolInfo is null)
+            {
+                return null;
+            }
+
+            return symbols
+               .Where(s => string.Equals(s.Value.Type, "parameter", StringComparison.OrdinalIgnoreCase))
+               .Where(s => symbolInfo.ContainsKey(s.Key))
+               .Select(s => (s.Key, s.Value, Info: symbolInfo[s.Key]))
+               .Where(x => x.Info.IsHidden is not true)
+               .Select(x => (x.Key, Value: x.Value with { ParameterName = x.Info.LongName }))
+               .ToDictionary(x => x.Key, x => x.Value);
         }
     }
 }

@@ -33,10 +33,10 @@ public class DotNetCli
             .RunAsync("dotnet", $"new --uninstall {packageId}")
             .ConfigureAwait(false);
 
-    public async Task CreateNewFromTemplateAsync(string templateShortName, IReadOnlyDictionary<string, string?> arguments) =>
+    public async Task CreateNewFromTemplateAsync(string templateShortName, IReadOnlyDictionary<string, string>? arguments) =>
         await this.RunAsync(
             "dotnet",
-            $"new {templateShortName} {DotNetCliHelper.FormatAsCliArguments(arguments)}")
+            $"new {templateShortName} {(arguments is not null ? DotNetCliHelper.FormatAsCliArguments(arguments) : string.Empty)}")
             .ConfigureAwait(false);
 
     private async Task<(string Output, string Error)> RunAsync(string name, string arguments)
@@ -82,9 +82,8 @@ public class DotNetCli
             return output;
         }
 
-        public static string FormatAsCliArguments(IReadOnlyDictionary<string, string?> arguments)
+        public static string FormatAsCliArguments(IReadOnlyDictionary<string, string> arguments)
             => string.Join(' ', arguments
-                .Where(x => x.Value is not null)
                 .Select(x => $"--{x.Key} \"{x.Value!.Replace('\\', '/')}\""));
     }
 }

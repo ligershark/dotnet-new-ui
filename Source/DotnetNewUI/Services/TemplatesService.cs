@@ -22,17 +22,8 @@ public class TemplatesService : ITemplatesService
         return TemplatesServiceHelper.MergeResults(builtInTemplates, installedTemplates).ToList();
     }
 
-    public async Task CreateNewFromTemplateAsync(string templateShortName, string outputPath, string? name, string? language)
-    {
-        var arguments = new Dictionary<string, string?>
-        {
-            { "output", outputPath },
-            { "name", name },
-            { "language", language },
-        };
-
-        await this.dotNetCli.CreateNewFromTemplateAsync(templateShortName, arguments).ConfigureAwait(false);
-    }
+    public async Task CreateNewFromTemplateAsync(string templateShortName, IReadOnlyDictionary<string, string>? parameters)
+        => await this.dotNetCli.CreateNewFromTemplateAsync(templateShortName, parameters).ConfigureAwait(false);
 
     internal static class TemplatesServiceHelper
     {

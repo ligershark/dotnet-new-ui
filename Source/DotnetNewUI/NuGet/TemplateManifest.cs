@@ -1,24 +1,43 @@
 namespace DotnetNewUI.NuGet;
 
-using System.Text.Json.Serialization;
-
 public record class TemplateManifest(
     string Identity,
     string GroupIdentity,
     string Name,
     string Author,
-    string[] Classifications,
+    IReadOnlyCollection<string> Classifications,
     string Description,
-    string[] ShortName,
-    TemplateTags? Tags)
-{
-    [JsonConverter(typeof(StringToStringArrayConverter))]
-    public string[] ShortName { get; init; } = ShortName;
-}
+    IReadOnlyCollection<string> ShortName,
+    TemplateTags? Tags,
+    IReadOnlyDictionary<string, Symbol>? Symbols);
 
-public record class TemplateTags(string? Language, string Type);
+public record class TemplateTags(
+    string? Language,
+    string Type);
 
-public record class TemplateIdeHostManifest(string? Icon, string? LearnMoreLink);
+public record class Symbol(
+    string Type,
+    string DataType,
+    string DisplayName,
+    string Description,
+    string DefaultValue,
+    string? ParameterName,
+    IReadOnlyCollection<ChoiceOption>? Choices);
+
+public record class ChoiceOption(
+    string? DisplayName,
+    string? Description,
+    string Choice);
+
+public record DotnetCliHostManifest(IReadOnlyDictionary<string, SymbolInfo>? SymbolInfo);
+
+public record class SymbolInfo(
+    string LongName,
+    bool? IsHidden);
+
+public record class TemplateIdeHostManifest(
+    string? Icon,
+    string? LearnMoreLink);
 
 public record CompositeTemplateManifest(
     string PackageName,
@@ -28,5 +47,5 @@ public record CompositeTemplateManifest(
     TemplateManifest TemplateManifest,
     TemplateIdeHostManifest? IdeHostManifest)
 {
-    public string[]? Languages { get; init; }
+    public IReadOnlyCollection<string>? Languages { get; init; }
 }

@@ -17,6 +17,6 @@ public class TemplatesController
         => await this.templatesService.GetInstalledTemplatesAsync().ConfigureAwait(false);
 
     [HttpPost("{templateShortName}")]
-    public async Task CreateNewFromTemplateAsync(string templateShortName, string outputPath, string? name, string? language)
-        => await this.templatesService.CreateNewFromTemplateAsync(templateShortName, outputPath, name, language).ConfigureAwait(false);
+    public async Task CreateNewFromTemplateAsync(string templateShortName, [FromBody] IReadOnlyDictionary<string, string>? parameters)
+        => await this.templatesService.CreateNewFromTemplateAsync(templateShortName, parameters).ConfigureAwait(false);
 }

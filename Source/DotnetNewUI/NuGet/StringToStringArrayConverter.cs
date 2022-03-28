@@ -4,9 +4,9 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 
 // The 'shortName' property is inconsistent in the JSON, sometimes it's a string, sometimes it's a string array
-public class StringToStringArrayConverter : JsonConverter<string[]>
+public class StringToStringArrayConverter : JsonConverter<IReadOnlyCollection<string>>
 {
-    public override string[]? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    public override IReadOnlyCollection<string>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         if (reader.TokenType == JsonTokenType.String)
         {
@@ -27,7 +27,7 @@ public class StringToStringArrayConverter : JsonConverter<string[]>
                 }
             }
 
-            return items.ToArray();
+            return items;
         }
         else
         {
@@ -35,7 +35,7 @@ public class StringToStringArrayConverter : JsonConverter<string[]>
         }
     }
 
-    public override void Write(Utf8JsonWriter writer, string[] value, JsonSerializerOptions options)
+    public override void Write(Utf8JsonWriter writer, IReadOnlyCollection<string> value, JsonSerializerOptions options)
     {
         writer.WriteStartArray();
 
