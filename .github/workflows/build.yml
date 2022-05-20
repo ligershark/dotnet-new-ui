@@ -33,7 +33,6 @@ jobs:
         with:
           lfs: true
           fetch-depth: 0
-
       - uses: actions/setup-node@v3.2.0
         with:
           node-version: "16"
@@ -45,7 +44,6 @@ jobs:
       - name: "NPM Build"
         run: npm run build
         working-directory: "Source/DotnetNewUI/Frontend"
-
       - name: "Install .NET Core SDK"
         uses: actions/setup-dotnet@v2.1.0
       - name: "Dotnet Tool Restore"
@@ -65,9 +63,28 @@ jobs:
         shell: pwsh
       - name: "Publish Artefacts"
         uses: actions/upload-artifact@v3.0.0
+        if: always()
         with:
           name: ${{matrix.os}}
           path: "./Artefacts"
+
+  publish-test-results:
+    name: "Publish Tests Results"
+    needs: build
+    if: always()
+    permissions:
+      checks: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Download Artefact"
+        uses: actions/download-artifact@v3.0.0
+        with:
+          path: "./Artefacts"
+      - name: "Publish Test Summary"
+        uses: test-summary/action@v1
+        with:
+          paths: "./Artefacts/*/*.xml"
 
   push-github-packages:
     name: "Push GitHub Packages"
