@@ -4,6 +4,7 @@ using System;
 using System.CommandLine;
 using System.CommandLine.Builder;
 using System.CommandLine.Hosting;
+using System.CommandLine.Invocation;
 using System.CommandLine.Parsing;
 using DotnetNewUI.Services;
 using Microsoft.Extensions.Hosting;
@@ -11,27 +12,24 @@ using Spectre.Console;
 
 public class Program
 {
+    private static readonly Option<int> PortOption = new(
+        new string[] { "-p", "--port" },
+        () => PortService.DefaultPort,
+        "The port to run the application on.");
+
+    private static readonly Option<bool> NoBrowserOption = new(
+        new string[] { "-n", "--no-browser" },
+        "Disable opening the browser.");
+
     public static async Task<int> Main(string[] arguments)
     {
-        var portOption = new Option<int>(
-            new string[] { "-p", "--port" },
-            () => PortService.DefaultPort,
-            "The port to run the application on.");
-
-        var noBrowserOption = new Option<bool>(
-            new string[] { "-n", "--no-browser" },
-            "Disable opening the browser.");
-
-        var rootCommand = new RootCommand("desc...")
+        var rootCommand = new RootCommand("Start dotnet new-ui")
         {
-            portOption,
-            noBrowserOption,
+            PortOption,
+            NoBrowserOption,
         };
 
-        rootCommand.SetHandler(
-            (Func<IHost, int, bool, CancellationToken, Task>)OnHandleAsync,
-            portOption,
-            noBrowserOption);
+        rootCommand.SetHandler(OnHandleAsync);
 
         var commandLineBuilder = new CommandLineBuilder(rootCommand)
             .UseHost(hostBuilder => hostBuilder.ConfigureHost())
@@ -42,8 +40,12 @@ public class Program
         return await parser.InvokeAsync(arguments).ConfigureAwait(false);
     }
 
-    private static async Task OnHandleAsync(IHost host, int port, bool noBrowser, CancellationToken cancellationToken)
+    private static async Task OnHandleAsync(InvocationContext context)
     {
+        var host = context.GetHost();
+        var port = context.ParseResult.GetValueForOption(PortOption);
+        var noBrowser = context.ParseResult.GetValueForOption(NoBrowserOption);
+        var cancellationToken = context.GetCancellationToken();
         var console = host.Services.GetRequiredService<IAnsiConsole>();
 
         try
