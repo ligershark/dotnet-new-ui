@@ -4,7 +4,7 @@
     <OutputType>Exe</OutputType>
     <IsPackable>true</IsPackable>
     <PackageId>new-ui</PackageId>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>new-ui</ToolCommandName>
   </PropertyGroup>

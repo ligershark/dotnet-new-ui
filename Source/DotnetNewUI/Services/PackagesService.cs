@@ -25,26 +25,26 @@ public class PackagesService : IPackagesService
         return PackageServiceHelper.MergeResults(onlineTemplatePackages, builtInTemplatePackages, installedTemplatePackages);
     }
 
-    public async Task InstallTemplatePackageAsync(string packageId)
-        => await this.dotNetCli.InstallTemplatePackageAsync(packageId).ConfigureAwait(false);
+    public async Task InstallTemplatePackageAsync(string packageId) =>
+        await this.dotNetCli.InstallTemplatePackageAsync(packageId).ConfigureAwait(false);
 
-    public async Task UninstallTemplatePackageAsync(string packageId)
-        => await this.dotNetCli.UninstallTemplatePackageAsync(packageId).ConfigureAwait(false);
+    public async Task UninstallTemplatePackageAsync(string packageId) =>
+        await this.dotNetCli.UninstallTemplatePackageAsync(packageId).ConfigureAwait(false);
 
-    public Task UpdateTemplatePackageAsync(string packageId)
-        => throw new NotImplementedException();
+    public Task UpdateTemplatePackageAsync(string packageId) =>
+        throw new NotImplementedException();
 
     internal static class PackageServiceHelper
     {
         public static IReadOnlyList<NuGetPackageInfo> MergeResults(IReadOnlyList<NuGetPackageInfo> onlinePackages, IReadOnlyList<string> builtInPackagePaths, IReadOnlyList<string> installedPackagePaths)
         {
             var builtInTemplateDictionary = builtInPackagePaths
-                .Select(x => PackageInspector.PackageInspectorHelper.GetPackageNameAndVersion(x))
+                .Select(PackageInspector.PackageInspectorHelper.GetPackageNameAndVersion)
                 .GroupBy(x => x.PackageName)
                 .ToDictionary(g => g.Key.ToLowerInvariant(), g => g.Select(x => x.Version).Max());
 
             var installedTemplateDictionary = installedPackagePaths
-                .Select(x => PackageInspector.PackageInspectorHelper.GetPackageNameAndVersion(x))
+                .Select(PackageInspector.PackageInspectorHelper.GetPackageNameAndVersion)
                 .GroupBy(x => x.PackageName)
                 .ToDictionary(g => g.Key.ToLowerInvariant(), g => g.Select(x => x.Version).Max());
 

@@ -16,7 +16,7 @@ internal static class BuiltInTemplatePackageProvider
         var (sdkVersion, sdkInstallDir) = await GetCurrentSdkInfoAsync(dotNetCli).ConfigureAwait(false);
 
         return GetTemplateFolders(sdkVersion, sdkInstallDir)
-            .Where(folder => Directory.Exists(folder))
+            .Where(Directory.Exists)
             .SelectMany(folder => Directory.EnumerateFiles(folder, "*.nupkg", SearchOption.TopDirectoryOnly))
             .ToList();
     }

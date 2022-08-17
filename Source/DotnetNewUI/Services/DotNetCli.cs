@@ -1,10 +1,11 @@
 namespace DotnetNewUI.Services;
+
 using System.Text.RegularExpressions;
 using global::NuGet.Versioning;
 using Nito.AsyncEx;
 using SimpleExec;
 
-public class DotNetCli
+public partial class DotNetCli
 {
     private readonly ILogger<DotNetCli> logger;
     private readonly AsyncLock asyncLock = new();
@@ -61,7 +62,7 @@ public class DotNetCli
         }
     }
 
-    internal static class DotNetCliHelper
+    internal static partial class DotNetCliHelper
     {
         public static IReadOnlyList<(SemanticVersion SdkVersion, string DotnetRootPath)> ParseDotNetListSdksOutput(string listSdksOutput)
         {
@@ -69,7 +70,7 @@ public class DotNetCli
                 .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
                 .Select(outputLine =>
                 {
-                    var regexMatch = Regex.Match(outputLine, "^(?<version>.*) \\[(?<path>.*)\\]$");
+                    var regexMatch = DotnetListSdkRegex().Match(outputLine);
                     var version = regexMatch.Groups["version"].Value;
                     var path = regexMatch.Groups["path"].Value;
 
@@ -82,9 +83,12 @@ public class DotNetCli
             return output;
         }
 
-        public static string FormatAsCliArguments(IReadOnlyDictionary<string, string?> arguments)
-            => string.Join(' ', arguments
+        public static string FormatAsCliArguments(IReadOnlyDictionary<string, string?> arguments) =>
+            string.Join(' ', arguments
                 .Where(x => x.Value is not null)
                 .Select(x => $"--{x.Key} \"{x.Value!.Replace('\\', '/')}\""));
+
+        [RegexGenerator("^(?<version>.*) \\[(?<path>.*)\\]$")]
+        private static partial Regex DotnetListSdkRegex();
     }
 }
