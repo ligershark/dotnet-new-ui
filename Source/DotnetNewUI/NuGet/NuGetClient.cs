@@ -22,7 +22,7 @@ public class NuGetClient : INuGetClient
         var firstPage = await this.GetTemplatePackagesAsync(firstPageUrl).ConfigureAwait(false);
 
         var remainingPagesUrls = NuGetUrlHelper.GetTemplatePackageQueryRemainingPagesUrls(queryEndpoint, firstPage.TotalHits, PageSize);
-        var remainingPages = await Task.WhenAll(remainingPagesUrls.Select(url => this.GetTemplatePackagesAsync(url))).ConfigureAwait(false);
+        var remainingPages = await Task.WhenAll(remainingPagesUrls.Select(this.GetTemplatePackagesAsync)).ConfigureAwait(false);
 
         var allTemplates = Enumerable
             .Concat(firstPage.Data, remainingPages.SelectMany(p => p.Data))

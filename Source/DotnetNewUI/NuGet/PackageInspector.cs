@@ -5,7 +5,7 @@ using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
-public static class PackageInspector
+public static partial class PackageInspector
 {
     public static IReadOnlyList<CompositeTemplateManifest> GetTemplateManifestsFromPackage(string packagePath, bool isBuiltIn)
     {
@@ -91,7 +91,7 @@ public static class PackageInspector
         return null;
     }
 
-    internal static class PackageInspectorHelper
+    internal static partial class PackageInspectorHelper
     {
         private static readonly JsonSerializerOptions JsonSerializerOptions = new(JsonSerializerDefaults.Web)
         {
@@ -103,8 +103,7 @@ public static class PackageInspector
         {
             var fileName = Path.GetFileName(filePath);
 
-            var regex = new Regex("^(?<packagename>.*)\\.(?<version>\\d*\\.\\d*\\.\\d*-?.*)\\.nupkg$");
-            var match = regex.Match(fileName);
+            var match = PackageNameAndVersionRegex().Match(fileName);
             var packageName = match.Groups["packagename"].Value;
             var version = match.Groups["version"].Value;
 
@@ -116,7 +115,7 @@ public static class PackageInspector
 
         public static IEnumerable<string> GetTemplateConfigDirs(IEnumerable<string> archive)
         {
-            var templateConfigDirRegex = new Regex("^(content/)?(?<template>.*)/\\.template\\.config");
+            var templateConfigDirRegex = TemplateConfigDirsRegex();
 
             return archive
                 .Select(x => templateConfigDirRegex.Match(x))
@@ -125,14 +124,14 @@ public static class PackageInspector
                 .Distinct();
         }
 
-        public static string GetTemplateManifestPath(string templateConfigDir)
-            => Path.Combine(templateConfigDir, "template.json").Replace("\\", "/");
+        public static string GetTemplateManifestPath(string templateConfigDir) =>
+            Path.Combine(templateConfigDir, "template.json").Replace("\\", "/");
 
-        public static string GetIdeHostManifestPath(string templateConfigDir)
-            => Path.Combine(templateConfigDir, "ide.host.json").Replace("\\", "/");
+        public static string GetIdeHostManifestPath(string templateConfigDir) =>
+            Path.Combine(templateConfigDir, "ide.host.json").Replace("\\", "/");
 
-        public static string GetTemplateIconPath(string templateConfigDir, string iconRelativePath)
-            => Path.Combine(templateConfigDir, iconRelativePath).Replace("\\", "/");
+        public static string GetTemplateIconPath(string templateConfigDir, string iconRelativePath) =>
+            Path.Combine(templateConfigDir, iconRelativePath).Replace("\\", "/");
 
         public static PackageManifest ParseXmlPackageManifest(Stream stream)
         {
@@ -145,11 +144,11 @@ public static class PackageInspector
             return new PackageManifest(new PackageMetadata(id, version, icon));
         }
 
-        public static TemplateManifest ParseJsonTemplateManifest(Stream stream)
-            => JsonSerializer.Deserialize<TemplateManifest>(stream, JsonSerializerOptions)!;
+        public static TemplateManifest ParseJsonTemplateManifest(Stream stream) =>
+            JsonSerializer.Deserialize<TemplateManifest>(stream, JsonSerializerOptions)!;
 
-        public static TemplateIdeHostManifest ParseJsonIdeHostManifest(Stream stream)
-            => JsonSerializer.Deserialize<TemplateIdeHostManifest>(stream, JsonSerializerOptions)!;
+        public static TemplateIdeHostManifest ParseJsonIdeHostManifest(Stream stream) =>
+            JsonSerializer.Deserialize<TemplateIdeHostManifest>(stream, JsonSerializerOptions)!;
 
         public static string GetBase64Icon(Stream stream, string fileName)
         {
@@ -162,5 +161,11 @@ public static class PackageInspector
 
             return $"data:image/{fileType};base64,{base64Icon}";
         }
+
+        [RegexGenerator("^(?<packagename>.*)\\.(?<version>\\d*\\.\\d*\\.\\d*-?.*)\\.nupkg$")]
+        private static partial Regex PackageNameAndVersionRegex();
+
+        [RegexGenerator("^(content/)?(?<template>.*)/\\.template\\.config")]
+        private static partial Regex TemplateConfigDirsRegex();
     }
 }
