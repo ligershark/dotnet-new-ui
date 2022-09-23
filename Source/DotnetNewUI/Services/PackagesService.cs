@@ -16,10 +16,7 @@ public class PackagesService : IPackagesService
 
     public async Task<IReadOnlyList<NuGetPackageInfo>> GetTemplatePackagesAsync()
     {
-        if (this.cachedOnlinePackages is null)
-        {
-            this.cachedOnlinePackages = this.nuGetClient.GetNuGetTemplatesAsync();
-        }
+        this.cachedOnlinePackages ??= this.nuGetClient.GetNuGetTemplatesAsync();
 
         var onlineTemplatePackages = await this.cachedOnlinePackages.ConfigureAwait(false);
         var builtInTemplatePackages = await BuiltInTemplatePackageProvider.GetAllTemplatePackagesAsync(this.dotNetCli).ConfigureAwait(false);
