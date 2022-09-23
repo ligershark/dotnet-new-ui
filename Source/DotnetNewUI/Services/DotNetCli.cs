@@ -88,7 +88,7 @@ public partial class DotNetCli
                 .Where(x => x.Value is not null)
                 .Select(x => $"--{x.Key} \"{x.Value!.Replace('\\', '/')}\""));
 
-        [RegexGenerator("^(?<version>.*) \\[(?<path>.*)\\]$")]
+        [GeneratedRegex("^(?<version>.*) \\[(?<path>.*)\\]$")]
         private static partial Regex DotnetListSdkRegex();
     }
 }
