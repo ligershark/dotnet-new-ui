@@ -50,10 +50,10 @@ jobs:
         run: dotnet tool restore
         shell: pwsh
       - name: "Dotnet Cake Build NPM"
-        run: dotnet cake --target=BuildNPM --verbosity=Diagnostic
+        run: dotnet cake --target=BuildNPM
         shell: pwsh
       - name: "Dotnet Cake Build"
-        run: dotnet cake --target=Build --verbosity=Diagnostic
+        run: dotnet cake --target=Build
         shell: pwsh
       - name: "Dotnet Cake Test"
         run: dotnet cake --target=Test

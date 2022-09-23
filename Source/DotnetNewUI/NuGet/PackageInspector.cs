@@ -162,10 +162,10 @@ public static partial class PackageInspector
             return $"data:image/{fileType};base64,{base64Icon}";
         }
 
-        [RegexGenerator("^(?<packagename>.*)\\.(?<version>\\d*\\.\\d*\\.\\d*-?.*)\\.nupkg$")]
+        [GeneratedRegex("^(?<packagename>.*)\\.(?<version>\\d*\\.\\d*\\.\\d*-?.*)\\.nupkg$")]
         private static partial Regex PackageNameAndVersionRegex();
 
-        [RegexGenerator("^(content/)?(?<template>.*)/\\.template\\.config")]
+        [GeneratedRegex("^(content/)?(?<template>.*)/\\.template\\.config")]
         private static partial Regex TemplateConfigDirsRegex();
     }
 }
