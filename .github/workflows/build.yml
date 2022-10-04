@@ -45,7 +45,7 @@ jobs:
         run: npm run build
         working-directory: "Source/DotnetNewUI/Frontend"
       - name: "Install .NET Core SDK"
-        uses: actions/setup-dotnet@v3.0.0
+        uses: actions/setup-dotnet@v3.0.1
       - name: "Dotnet Tool Restore"
         run: dotnet tool restore
         shell: pwsh
