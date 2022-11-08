@@ -17,7 +17,7 @@
 
   <ItemGroup Label="Package References">
     <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
     <PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
     <PackageReference Include="NuGet.Versioning" Version="6.3.1" />
     <PackageReference Include="SimpleExec" Version="11.0.0" />
