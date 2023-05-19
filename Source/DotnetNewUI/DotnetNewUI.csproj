@@ -21,7 +21,7 @@
     <PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
     <PackageReference Include="NuGet.Versioning" Version="6.6.0" />
     <PackageReference Include="SimpleExec" Version="11.0.0" />
-    <PackageReference Include="Spectre.Console" Version="0.46.0" />
+    <PackageReference Include="Spectre.Console" Version="0.47.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
     <PackageReference Include="System.CommandLine.Hosting" Version="0.4.0-alpha.22272.1" />
