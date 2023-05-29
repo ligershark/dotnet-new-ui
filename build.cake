@@ -7,13 +7,15 @@ var configuration =
 
 var artefactsDirectory = Directory("./Artefacts");
 var frontendDirectory = GetDirectories("Source/DotnetNewUI/Frontend").First();
-var frontendDistDirectory = GetDirectories("Source/DotnetNewUI/Frontend/dist").First();
+var frontendDistDirectory = GetDirectories("Source/DotnetNewUI/Frontend/dist").FirstOrDefault();
 
 Task("Clean")
     .Description("Cleans the artefacts, bin and obj directories.")
     .Does(() =>
     {
-        CleanDirectory(frontendDistDirectory);
+        if (frontendDistDirectory != null) {
+            CleanDirectory(frontendDistDirectory);
+        }
         CleanDirectory(artefactsDirectory);
         DeleteDirectories(GetDirectories("**/bin"), new DeleteDirectorySettings() { Force = true, Recursive = true });
         DeleteDirectories(GetDirectories("**/obj"), new DeleteDirectorySettings() { Force = true, Recursive = true });
